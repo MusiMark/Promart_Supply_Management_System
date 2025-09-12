@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Smartphone X Pro | ProMart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --primary: #FFC000;
+            --accent1: #C13608;
+            --accent2: #D24C0E;
+            --accent3: #DE681B;
+            --light: #ffffff;
+            --light-bg: #f8f9fa;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --card-shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--light);
+            padding: 0.8rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: var(--accent1);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-family: 'Informal Roman', 'Montserrat', sans-serif;
+        }
+
+        .logo span {
+            color: var(--primary);
+            font-family: 'Informal Roman', 'Montserrat', sans-serif;
+        }
+
+        .search-bar {
+            flex: 0 0 45%;
+            display: flex;
+            background: var(--light-bg);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: box-shadow 0.3s;
+        }
+
+        .search-bar:focus-within {
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-bar button {
+            background: var(--primary);
+            border: none;
+            padding: 0 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: #e6ac00;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 1.8rem;
+            position: relative;
+        }
+
+        .icon-link {
+            color: var(--text);
+            text-decoration: none;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .icon-link:hover {
+            color: var(--accent1);
+        }
+
+        .icon-link i {
+            font-size: 1.4rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent1);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Enhanced Account Dropdown */
+        .account-dropdown {
+            position: relative;
+            display: inline-block;
+            z-index: 1000;
+        }
+        
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: -100px;
+            background-color: var(--light);
+            min-width: 280px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            z-index: 100;
+            padding: 20px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(15px) scale(0.95);
+            transform-origin: top right;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .account-dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        
+        .dropdown-header {
+            padding: 0 25px 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent3), var(--accent1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: var(--text);
+        }
+        
+        .user-email {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .dropdown-content a {
+            color: var(--text);
+            padding: 14px 25px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dropdown-content a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 192, 0, 0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .dropdown-content a:hover::before {
+            left: 100%;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: rgba(255, 192, 0, 0.08);
+            color: var(--accent1);
+            padding-left: 30px;
+        }
+        
+        .dropdown-content a i {
+            margin-right: 15px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(193, 54, 8, 0.1);
+            border-radius: 8px;
+            padding: 5px;
+            color: var(--accent1);
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-content a:hover i {
+            background: var(--accent1);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(0,0,0,0.05);
+            margin: 10px 0;
+        }
+        
+        
+        .dropdown-pointer {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            background: var(--light);
+            transform: rotate(45deg);
+            box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.05);
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--light);
+            padding: 0.8rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 2.5rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05rem;
+            transition: color 0.3s;
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent1);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        /* FIXED: Categories Dropdown */
+        .categories-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--light-bg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 12px 12px;
+            padding: 30px 5%;
+            display: none;
+            z-index: 850;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s ease forwards;
+            border-top: none;
+        }
+
+        header .item-dropdown:hover .categories-dropdown {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .category-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-bg);
+            color: var(--accent1);
+        }
+
+        .category-links {
+            list-style: none;
+        }
+
+        .category-links li {
+            margin-bottom: 12px;
+        }
+
+        .category-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            transition: all 0.3s;
+        }
+
+        .category-links a:hover {
+            color: var(--accent1);
+            transform: translateX(5px);
+        }
+
+        .category-links a i {
+            margin-right: 10px;
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+
+        
+        /* Cart Animation */
+        .cart-animation {
+            animation: cartBounce 0.8s ease;
+        }
+
+        @keyframes cartBounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-15px);
+            }
+
+            60% {
+                transform: translateY(-7px);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--light);
+            color: var(--text);
+            padding: 3rem 5% 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent1);
+            position: relative;
+            padding-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a i {
+            width: 20px;
+            color: var(--accent2);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent1);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--light-bg);
+            border-radius: 50%;
+            color: var(--text);
+            font-size: 1.2rem;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .contact-info i {
+            color: var(--accent1);
+            width: 20px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+         
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-bar {
+                width: 100%;
+                max-width: 500px;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+            }
+
+
+            .categories-dropdown-container {
+                padding: 20px 5%;
+            }
+            
+            
+        }
+
+        @media (max-width: 480px) {
+            
+            .nav-links {
+                gap: 0.7rem;
+                font-size: 0.85rem;
+            }
+
+            .categories-dropdown-container {
+                padding: 15px 5%;
+            }
+            .dropdown-content {
+                min-width: 250px;
+                right: -20px;
+            }
+        }
+        
+        /* Product Gallery */
+        .gallery-main {
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-thumb {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .gallery-thumb:hover, .gallery-thumb.active {
+            opacity: 1;
+            border-color: var(--primary);
+        }
+        
+        /* Specification Table */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .spec-table tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .spec-table td {
+            padding: 12px 16px;
+        }
+        
+        .spec-table td:first-child {
+            font-weight: 500;
+            width: 30%;
+        }
+        
+        /* Review Card */
+        .review-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header with Navigation -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">Pro<span>Mart</span></a>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products, brands and more...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="nav-icons">
+                <div class="account-dropdown">
+                    <a href="#" class="icon-link">
+                        <i class="fas fa-user"></i>
+                        <span>Account</span>
+                    </a>
+                    <div class="dropdown-content">
+                        <div class="dropdown-pointer"></div>
+                        <div class="dropdown-header">
+                            <div class="user-avatar">JD</div>
+                            <div class="user-info">
+                                <div class="user-name">John Doe</div>
+                                <div class="user-email">john.doe@example.com</div>
+                            </div>
+                        </div>
+                        
+                        <a href="#"><i class="fas fa-user-circle"></i> My Profile</a>
+                        <a href="#"><i class="fas fa-box"></i> Orders</a>
+                        <a href="#"><i class="fas fa-history"></i> Order History</a>
+                        
+                        <div class="dropdown-divider"></div>
+                        
+                        <a href="#"><i class="fas fa-cog"></i> Account Settings</a>
+                        <a href="#"><i class="fas fa-shield-alt"></i> Security</a>
+                        <a href="#"><i class="fas fa-bell"></i> Notifications</a>
+                                                
+                        <div class="dropdown-divider"></div>
+                        
+                        <a href="#" style="color: var(--accent1); font-weight: 600;"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                       
+                    </div>
+                </div>
+
+                <a href="#" class="icon-link">
+                    <i class="fas fa-heart"></i>
+                    <span>Wishlist</span>
+                </a>
+
+                <a href="#" class="icon-link cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span class="cart-count">3</span>
+                </a>
+            </div>
+        </div>
+
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li id="item-dropdown"><a href="#">All Categories <i class="fas fa-chevron-down"
+                            style="font-size: 0.8rem;"></i></a></li>
+                <li><a href="#">Electronics</a></li>
+                <li><a href="#">Fashion</a></li>
+                <li><a href="#">Home & Kitchen</a></li>
+                <li><a href="#">Beauty</a></li>
+                <li><a href="#">Sports</a></li>
+                <li><a href="#">Deals</a></li>
+                <li><a href="#" style="color: var(--accent1); font-weight: 600;"><i class="fas fa-tag"></i> Sell
+                        Items</a></li>
+            </ul>
+
+        </nav>
+        <!-- FIXED: Moved dropdown-->
+        <div class="categories-dropdown">
+            <div class="categories-grid">
+                <div class="category-column">
+                    <h4>Electronics</h4>
+                    <ul class="category-links">
+                        <li><a href="#"><i class="fas fa-laptop"></i> Laptops</a></li>
+                        <li><a href="#"><i class="fas fa-mobile-alt"></i> Smartphones</a></li>
+                        <li><a href="#"><i class="fas fa-tablet-alt"></i> Tablets</a></li>
+                        <li><a href="#"><i class="fas fa-tv"></i> Televisions</a></li>
+                        <li><a href="#"><i class="fas fa-headphones"></i> Headphones</a></li>
+                    </ul>
+                </div>
+
+                <div class="category-column">
+                    <h4>Fashion</h4>
+                    <ul class="category-links">
+                        <li><a href="#"><i class="fas fa-tshirt"></i> Men's Clothing</a></li>
+                        <li><a href="#"><i class="fas fa-female"></i> Women's Clothing</a></li>
+                        <li><a href="#"><i class="fas fa-shoe-prints"></i> Footwear</a></li>
+                        <li><a href="#"><i class="fas fa-gem"></i> Jewelry</a></li>
+                        <li><a href="#"><i class="fas fa-shopping-bag"></i> Bags & Accessories</a></li>
+                    </ul>
+                </div>
+
+                <div class="category-column">
+                    <h4>Home & Kitchen</h4>
+                    <ul class="category-links">
+                        <li><a href="#"><i class="fas fa-blender"></i> Appliances</a></li>
+                        <li><a href="#"><i class="fas fa-couch"></i> Furniture</a></li>
+                        <li><a href="#"><i class="fas fa-utensils"></i> Kitchenware</a></li>
+                        <li><a href="#"><i class="fas fa-lightbulb"></i> Lighting</a></li>
+                        <li><a href="#"><i class="fas fa-home"></i> Home Decor</a></li>
+                    </ul>
+                </div>
+
+                <div class="category-column">
+                    <h4>More Categories</h4>
+                    <ul class="category-links">
+                        <li><a href="#"><i class="fas fa-heart"></i> Beauty</a></li>
+                        <li><a href="#"><i class="fas fa-football-ball"></i> Sports</a></li>
+                        <li><a href="#"><i class="fas fa-book"></i> Books</a></li>
+                        <li><a href="#"><i class="fas fa-baby"></i> Baby Products</a></li>
+                        <li><a href="#"><i class="fas fa-gamepad"></i> Gaming</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Single Product Page Content -->
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Breadcrumbs -->
+        <div class="mb-6">
+            <div class="flex" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="#" class="text-gray-600 hover:text-[#C13608] inline-flex items-center">
+                            <i class="fas fa-home mr-2"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                            <a href="#" class="text-gray-600 hover:text-[#C13608] ml-1 md:ml-2">Electronics</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                            <a href="#" class="text-gray-600 hover:text-[#C13608] ml-1 md:ml-2">Smartphones</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                            <span class="text-[#C13608] font-medium ml-1 md:ml-2">Premium Smartphone X Pro</span>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Product Section -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+                <!-- Product Gallery -->
+                <div class="lg:pr-8">
+                    <div class="gallery-main rounded-xl overflow-hidden mb-4">
+                        <img id="mainImage" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Premium Smartphone X Pro" class="w-full h-auto rounded-xl">
+                    </div>
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="gallery-thumb rounded-lg overflow-hidden active" onclick="changeImage('https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')">
+                            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Thumbnail 1" class="w-full h-24 object-cover">
+                        </div>
+                        <div class="gallery-thumb rounded-lg overflow-hidden" onclick="changeImage('https://images.unsplash.com/photo-1605236453806-6ff36851218e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')">
+                            <img src="https://images.unsplash.com/photo-1605236453806-6ff36851218e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Thumbnail 2" class="w-full h-24 object-cover">
+                        </div>
+                        <div class="gallery-thumb rounded-lg overflow-hidden" onclick="changeImage('https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')">
+                            <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Thumbnail 3" class="w-full h-24 object-cover">
+                        </div>
+                        <div class="gallery-thumb rounded-lg overflow-hidden" onclick="changeImage('https://images.unsplash.com/photo-1610792516307-ea5acd9c3b00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')">
+                            <img src="https://images.unsplash.com/photo-1610792516307-ea5acd9c3b00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Thumbnail 4" class="w-full h-24 object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800 mb-2">Premium Smartphone X Pro</h1>
+                            <div class="flex items-center mb-3">
+                                <div class="flex text-yellow-400 mr-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-gray-600">(128 Reviews)</span>
+                                <span class="mx-3 text-gray-300">|</span>
+                                <span class="text-green-600 font-medium">
+                                    <i class="fas fa-check-circle mr-1"></i> In Stock
+                                </span>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-[#C13608]">
+                            <i class="far fa-heart text-2xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl font-bold text-[#C13608] mr-4">$899.99</span>
+                            <span class="text-lg text-gray-500 line-through">$999.99</span>
+                            <span class="ml-4 px-2 py-1 bg-red-100 text-red-800 text-sm font-bold rounded">Save $100</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Experience the future of mobile technology with our flagship smartphone. Featuring a stunning 6.7" OLED display, triple camera system, and blazing fast performance.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Color Options</h3>
+                        <div class="flex space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#C13608] active-color" style="background-color: #1e293b;">
+                                <i class="fas fa-check text-white text-xs hidden"></i>
+                            </div>
+                            <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#C13608]" style="background-color: #e2e8f0;">
+                                <i class="fas fa-check text-gray-800 text-xs hidden"></i>
+                            </div>
+                            <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#C13608]" style="background-color: #b91c1c;">
+                                <i class="fas fa-check text-white text-xs hidden"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Storage Capacity</h3>
+                        <div class="flex space-x-3">
+                            <button class="px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-[#C13608] active-storage">128GB</button>
+                            <button class="px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-[#C13608]">256GB</button>
+                            <button class="px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-[#C13608]">512GB</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quantity</h3>
+                        <div class="flex items-center">
+                            <div class="flex items-center border border-gray-300 rounded-lg mr-6">
+                                <button class="px-4 py-3 text-gray-600 hover:bg-gray-100">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="text" class="w-12 text-center border-0 focus:ring-0 text-lg" value="1">
+                                <button class="px-4 py-3 text-gray-600 hover:bg-gray-100">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">Only <span class="font-bold text-[#C13608]">12 items</span> left!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <button class="flex-1 min-w-[200px] py-4 bg-[#FFC000] hover:bg-[#e6ac00] text-gray-800 font-bold rounded-lg transition-colors flex items-center justify-center">
+                            <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                        </button>
+                        <button class="flex-1 min-w-[200px] py-4 bg-[#C13608] hover:bg-[#D24C0E] text-white font-bold rounded-lg transition-colors">
+                            Buy Now
+                        </button>
+                    </div>
+
+                    <!-- Product Highlights -->
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span class="text-gray-600">2-year manufacturer warranty</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span class="text-gray-600">Free shipping & returns</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span class="text-gray-600">Compatible with all major carriers</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span class="text-gray-600">Includes fast charger in box</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details Tabs -->
+            <div class="border-t border-gray-200 mt-4">
+                <div class="flex border-b border-gray-200">
+                    <button class="tab-btn active py-4 px-6 font-medium text-gray-800 border-b-2 border-[#C13608]">Description</button>
+                    <button class="tab-btn py-4 px-6 font-medium text-gray-600 hover:text-gray-800">Specifications</button>
+                    <button class="tab-btn py-4 px-6 font-medium text-gray-600 hover:text-gray-800">Reviews (128)</button>
+                </div>
+
+                <div class="p-8">
+                    <!-- Description Tab -->
+                    <div id="descriptionTab">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">About this item</h2>
+                        <div class="prose max-w-none text-gray-600">
+                            <p>The Premium Smartphone X Pro redefines mobile excellence with its cutting-edge features and stunning design. Engineered for those who demand the best, this device combines power, beauty, and innovation in one sleek package.</p>
+                            
+                            <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Key Features</h3>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>6.7" Super AMOLED Display:</strong> Experience vibrant colors and deep blacks with our industry-leading display technology</li>
+                                <li><strong>Triple Camera System:</strong> 108MP main camera, 12MP ultra-wide, and 8MP telephoto with 5x optical zoom</li>
+                                <li><strong>All-Day Battery Life:</strong> 5000mAh battery with 65W fast charging</li>
+                                <li><strong>Blazing Fast Performance:</strong> Latest Snapdragon processor with 8GB RAM</li>
+                                <li><strong>5G Connectivity:</strong> Ultra-fast download and streaming speeds</li>
+                                <li><strong>IP68 Water & Dust Resistance:</strong> Built to withstand the elements</li>
+                                <li><strong>In-display Fingerprint Sensor:</strong> Advanced security at your fingertips</li>
+                            </ul>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                                <div class="bg-[#f8f9fa] rounded-xl p-6">
+                                    <div class="flex items-start mb-3">
+                                        <div class="text-[#C13608] mr-3 mt-1">
+                                            <i class="fas fa-shipping-fast text-2xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-gray-800 mb-1">Free Shipping & Returns</h4>
+                                            <p class="text-gray-600">Free standard shipping on all orders. 30-day return policy.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#f8f9fa] rounded-xl p-6">
+                                    <div class="flex items-start mb-3">
+                                        <div class="text-[#C13608] mr-3 mt-1">
+                                            <i class="fas fa-shield-alt text-2xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-gray-800 mb-1">2-Year Warranty</h4>
+                                            <p class="text-gray-600">Comprehensive coverage for manufacturer defects.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="mt-16">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">You May Also Like</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Smart Watch" class="w-full h-56 object-cover">
+                        <div class="absolute top-2 left-2 flex">
+                            <div class="bg-[#C13608] text-white text-xs font-bold px-2 py-1 rounded-full mr-1">BEST SELLER</div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Smart Watch Series 5</h3>
+                        <p class="text-gray-600 text-sm mb-3">Health Monitor, GPS, Waterproof</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-[#C13608]">$249.99</span>
+                            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#FFC000]">
+                                <i class="fas fa-shopping-cart text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Headphones" class="w-full h-56 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Wireless Headphones Pro</h3>
+                        <p class="text-gray-600 text-sm mb-3">Noise Cancelling, 30h Battery</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-lg font-bold text-[#C13608]">$179.99</span>
+                                <span class="text-sm text-gray-500 line-through ml-2">$199.99</span>
+                            </div>
+                            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#FFC000]">
+                                <i class="fas fa-shopping-cart text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Speaker" class="w-full h-56 object-cover">
+                        <div class="absolute top-2 left-2 flex">
+                            <div class="bg-[#FFC000] text-gray-800 text-xs font-bold px-2 py-1 rounded-full mr-1">-20%</div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Bluetooth Speaker</h3>
+                        <p class="text-gray-600 text-sm mb-3">360° Sound, 15h Battery, Waterproof</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-lg font-bold text-[#C13608]">$89.99</span>
+                                <span class="text-sm text-gray-500 line-through ml-2">$109.99</span>
+                            </div>
+                            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#FFC000]">
+                                <i class="fas fa-shopping-cart text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1595941069915-4ebc5197c14a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Wireless Charger" class="w-full h-56 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Fast Wireless Charger</h3>
+                        <p class="text-gray-600 text-sm mb-3">15W Fast Charging, Multi-Device</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-[#C13608]">$49.99</span>
+                            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#FFC000]">
+                                <i class="fas fa-shopping-cart text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            
+            <div class="footer-column">
+                <h3>Information</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-angle-right"></i> About Us</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Contact Us</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Terms & Conditions</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Shipping Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Customer Service</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-angle-right"></i> My Account</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Track Your Order</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Returns & Exchanges</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> FAQs</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Help Center</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-map-marker-alt"></i> 1234 Shopping Street, Retail City</p>
+                    <p><i class="fas fa-phone"></i> (123) 456-7890</p>
+                    <p><i class="fas fa-envelope"></i> info@mart.com</p>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2023 ProMart. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Hover Menu
+        const itemDropdown = document.getElementById('item-dropdown');
+        const categoriesDropdown = document.querySelector('.categories-dropdown');
+        
+        let hideTimeout;
+        let isMouseOver = false;
+        
+        // Function to show categories
+        function showCategories() {
+            clearTimeout(hideTimeout);
+            categoriesDropdown.style.display = 'block';
+        }
+        
+        // Function to hide categories after delay
+        function hideCategories() {
+            hideTimeout = setTimeout(() => {
+                categoriesDropdown.style.display = 'none';
+            }, 100);
+        }
+        
+        // When mouse enters either element
+        itemDropdown.addEventListener('mouseenter', () => {
+            isMouseOver = true;
+            showCategories();
+        });
+        
+        categoriesDropdown.addEventListener('mouseenter', () => {
+            isMouseOver = true;
+            showCategories();
+        });
+        
+        // When mouse leaves either element
+        itemDropdown.addEventListener('mouseleave', () => {
+            isMouseOver = false;
+            hideCategories();
+        });
+        
+        categoriesDropdown.addEventListener('mouseleave', () => {
+            isMouseOver = false;
+            hideCategories();
+        });
+        
+        // Product Gallery
+        function changeImage(src) {
+            document.getElementById('mainImage').src = src;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.gallery-thumb').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Color selection
+        document.querySelectorAll('.gallery-thumb').forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                document.querySelectorAll('.gallery-thumb').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+        
+        // Storage selection
+        document.querySelectorAll('.active-storage').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.active-storage').forEach(b => {
+                    b.classList.remove('bg-[#FFC000]', 'border-[#C13608]', 'text-[#C13608]');
+                    b.classList.add('border-gray-300');
+                });
+                this.classList.add('bg-[#FFC000]', 'border-[#C13608]', 'text-[#C13608]');
+                this.classList.remove('border-gray-300');
+            });
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('active', 'text-gray-800', 'border-b-2', 'border-[#C13608]');
+                    b.classList.add('text-gray-600');
+                });
+                this.classList.add('active', 'text-gray-800', 'border-b-2', 'border-[#C13608]');
+                this.classList.remove('text-gray-600');
+            });
+        });
+        
+        // Quantity adjustment
+        const minusBtn = document.querySelector('.fa-minus').closest('button');
+        const plusBtn = document.querySelector('.fa-plus').closest('button');
+        const quantityInput = document.querySelector('input[type="text"]');
+        
+        minusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+            }
+        });
+        
+        plusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            quantityInput.value = value + 1;
+        });
+        
+        // Add to cart animation
+        document.querySelector('.fa-shopping-cart').closest('button').addEventListener('click', function() {
+            const cartCount = document.querySelector('.cart-count');
+            let count = parseInt(cartCount.textContent);
+            cartCount.textContent = count + 1;
+            cartCount.classList.add('cart-animation');
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                cartCount.classList.remove('cart-animation');
+            }, 800);
+            
+            // Show success message
+            alert('Product added to cart!');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+@extends('layouts.home')
+
+@section('title', $sub_category ?? $category)
+
+@section('content')
+
+<div class="container mx-auto px-4 py-8">
+    {{-- Page Title & Breadcrumbs --}}
+    <div class="mb-8">
+        @if(isset($sub_category))
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Shop For {{ $sub_category }}</h1>
+        <div class="flex items-center text-gray-600">
+            <a href="{{ route('home') }}" class="hover:text-[#C13608] transition-colors">Home</a>
+            <span class="mx-2">></span>
+            <a href="/products/{{ $category }}" class="hover:text-[#C13608] transition-colors">{{ $category }}</a>
+            <span class="mx-2">></span>
+            <span class="text-[#C13608]">{{ $sub_category }}</span>
+        </div>
+        @else
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Shop For {{ $category }}</h1>
+        <div class="flex items-center text-gray-600">
+            <a href="{{ route('home') }}" class="hover:text-[#C13608] transition-colors">Home</a>
+           <span class="mx-2">></span>
+            <span class="text-[#C13608]">{{ $category }}</span>
+        </div>
+        @endif
+    </div>
+
+    {{-- Filter Section --}}
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm">
+        {{-- Filter Dropdown --}}
+        <div class="flex items-center mb-4 md:mb-0">
+            <span class="mr-3 text-gray-700">Filter:</span>
+            <div class="relative">
+                <select class="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 leading-tight focus:outline-none focus:ring-2 focus:ring-[#FFC000] transition-shadow">
+                    <option>All Categories</option>
+                    <option>Electronics</option>
+                    <option>Fashion</option>
+                    <option>Home & Kitchen</option>
+                    <option>Beauty</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="fas fa-chevron-down text-sm"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- Sort Dropdown --}}
+        <div class="flex items-center">
+            <span class="mr-3 text-gray-700">Sort by:</span>
+            <div class="relative">
+                <select class="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 leading-tight focus:outline-none focus:ring-2 focus:ring-[#FFC000] transition-shadow">
+                    <option>Featured</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Customer Rating</option>
+                    <option>Newest Arrivals</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="fas fa-chevron-down text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+    {{-- Products Grid --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @foreach($products as $product)
+        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+            <a href="/products/{{$product->category_id}}/{{$product->subcategory_id}}/{{$product->id}}">
+            {{-- Image and badges --}}
+            <div class="relative">
+                <img src="{{ $product->image_url ?? 'https://images.unsplash.com/vector-1738237080330-b9d0755ede07?q=80&w=2148&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}" alt="{{ $product->product_name }}" class="w-full h-56 object-cover" />
+                <div class="absolute top-3 left-3 flex flex-col space-y-2">
+                    @if(isset($product->badge))
+                        <span class="bg-[#C13608] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                            {{ $product->badge }}
+                        </span>
+                    @endif
+                    @if(isset($product->discount))
+                        <span class="bg-[#FFC000] text-gray-900 text-xs font-semibold px-3 py-1 rounded-full">
+                            {{ $product->discount }}
+                        </span>
+                    @endif
+                </div>
+            </div>
+            {{-- Product Info --}}
+            <div class="p-4 flex flex-col flex-grow">
+                {{-- Ratings --}}
+                <div class="flex items-center mb-2">
+                    <div class="flex text-yellow-400">
+                        @for($i = 1; $i <= 5; $i++)
+                            @if($i <= floor($product->ratings))
+                                <i class="fas fa-star text-sm"></i>
+                            @elseif($i == ceil($product->ratings) && !is_int($product->ratings))
+                                <i class="fas fa-star-half-alt text-sm"></i>
+                            @else
+                                <i class="far fa-star text-sm"></i>
+                            @endif
+                        @endfor
+                    </div>
+                    <span class="text-gray-500 text-xs ml-2">({{ $product->previews }})</span>
+                </div>
+                {{-- Name & Description --}}
+                <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ $product->product_name }}</h3>
+                <p class="text-gray-600 text-sm mb-3 flex-grow">{{ $product->description }}</p>
+
+                {{-- Price --}}
+                <div class="flex items-center justify-between mt-auto">
+                    <div>
+                        <div class="text-lg font-bold text-[#C13608]">UGX {{ $product->price }}</div>
+                    </div>
+                    {{-- Cart Controls --}}
+                    <div class="product-cart-controls" data-product-id="{{ $product->id }}">
+                        @if (session()->has('cart') && isset(session('cart')[$product->id]))
+                        {{-- Add Button --}}
+                        <button class="add-to-cart bg-[#FFC000] hover:bg-[#e6ac00] text-gray-800 font-medium py-2 px-4 rounded-full transition flex items-center hidden" data-loading="false" data-quantity="0">
+                            <i class="fas fa-shopping-cart mr-2 text-sm"></i> Add
+                        </button>
+                        {{-- Quantity Controls (hidden initially) --}}
+                        <div class="quantity-controls flex items-center space-x-2" data-quantity="0">
+                            <button class="decrease-qty bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                                <i class="fas fa-minus text-xs"></i>
+                            </button>
+                            <span class="qty w-6 text-center">{{ session('cart')[$product->id]['quantity']}}</span>
+                            <button class="increase-qty bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                                <i class="fas fa-plus text-xs"></i>
+                            </button>
+                            <span class="added-text ml-2 text-sm text-gray-700 hidden md:inline">Added</span>
+                        </div>
+                        @else
+                        {{-- Add Button --}}
+                        <button class="add-to-cart bg-[#FFC000] hover:bg-[#e6ac00] text-gray-800 font-medium py-2 px-4 rounded-full transition flex items-center unset-all" data-loading="false" data-quantity="0">
+                            <i class="fas fa-shopping-cart mr-2 text-sm"></i> Add
+                        </button>
+                        {{-- Quantity Controls (hidden initially) --}}
+                        <div class="quantity-controls flex items-center space-x-2 hidden" data-quantity="0">
+                            <button class="decrease-qty bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                                <i class="fas fa-minus text-xs"></i>
+                            </button>
+                            <span class="qty w-6 text-center">0</span>
+                            <button class="increase-qty bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                                <i class="fas fa-plus text-xs"></i>
+                            </button>
+                            <span class="added-text ml-2 text-sm text-gray-700 hidden md:inline">Added</span>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+        @endforeach
+    </div>
+
+    {{-- Pagination --}}
+    @if($totalPages > 1)
+    <div class="mt-12 flex justify-center">
+        <nav class="flex items-center space-x-1">
+            {{-- Previous --}}
+            <a href="{{ $currentPage > 1 ? '?page=' . ($currentPage -1) : '#' }}" class="inline-flex items-center justify-center w-10 h-10 text-[#C13608] rounded-full hover:bg-[#FFC000] hover:text-white transition-colors {{ $currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : '' }}">
+                <i class="fas fa-chevron-left text-sm"></i>
+            </a>
+            
+            {{-- Page Numbers --}}
+            @if($startPage > 1)
+                <a href="?page=1" class="inline-flex items-center justify-center w-10 h-10 text-gray-700 rounded-full hover:bg-gray-100 transition-colors">1</a>
+                @if($startPage > 2)
+                <span class="inline-flex items-center justify-center w-10 h-10 text-gray-500">...</span>
+                @endif
+            @endif
+            
+            @for($i = $startPage; $i <= $endPage; $i++)
+                @if($i == $currentPage)
+                <span class="inline-flex items-center justify-center w-10 h-10 text-white bg-[#C13608] rounded-full">{{ $i }}</span>
+                @else
+                <a href="?page={{ $i }}" class="inline-flex items-center justify-center w-10 h-10 text-gray-700 rounded-full hover:bg-gray-100 transition-colors">{{ $i }}</a>
+                @endif
+            @endfor
+            
+            @if($endPage < $totalPages)
+                @if($endPage < $totalPages -1)
+                <span class="inline-flex items-center justify-center w-10 h-10 text-gray-500">...</span>
+                @endif
+                <a href="?page={{ $totalPages }}" class="inline-flex items-center justify-center w-10 h-10 text-gray-700 rounded-full hover:bg-gray-100 transition-colors">{{ $totalPages }}</a>
+            @endif
+            
+            {{-- Next --}}
+            <a href="{{ $currentPage < $totalPages ? '?page=' . ($currentPage+1) : '#' }}" class="inline-flex items-center justify-center w-10 h-10 text-[#C13608] rounded-full hover:bg-[#FFC000] hover:text-white transition-colors {{ $currentPage >= $totalPages ? 'opacity-50 cursor-not-allowed' : '' }}">
+                <i class="fas fa-chevron-right text-sm"></i>
+            </a>
+        </nav>
+    </div>
+    @endif
+</div>
+@endsection
+
+@section('script')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Define routes and CSRF token
+    const cartAddUrl = "{{ route('cart.add') }}";
+    const cartUpdateUrl = "{{ route('cart.update') }}";
+    const cartRemoveUrl = "{{ route('cart.remove') }}";
+    const token = "{{ csrf_token() }}";
+    const cartCountSpan = document.querySelector('.cart-count');
+
+    // Function to trigger cart animation
+    function triggerCartAnimation() {
+        cartCountSpan.classList.remove('cart-animation');
+        void cartCountSpan.offsetWidth; // Trigger reflow
+        cartCountSpan.classList.add('cart-animation');
+    }
+
+    // Handle "Add to Cart"
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', function(event) {
+            if (this.getAttribute('data-loading') === 'true') return;
+            
+            // stops the click from bubbling to the <a>
+            event.stopPropagation(); 
+            event.preventDefault();
+
+            const container = this.closest('.product-cart-controls');
+            const productId = container.getAttribute('data-product-id');
+            const qtyDiv = container.querySelector('.quantity-controls');
+            const qtySpan = qtyDiv.querySelector('.qty');
+            const addedText = qtyDiv.querySelector('.added-text');
+            
+            // Set loading state
+            this.setAttribute('data-loading', 'true');
+            this.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Adding...`;
+
+            // AJAX request to add item
+            fetch(cartAddUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI
+                    updateCartCount();
+                    triggerCartAnimation();
+                    
+                    qtyDiv.classList.remove('hidden');
+                    this.classList.add('hidden');
+                    qtySpan.textContent = 1;
+                    
+                    // Add animation
+                    qtyDiv.classList.add('animate-pulse');
+                    setTimeout(() => qtyDiv.classList.remove('animate-pulse'), 500);
+
+                    //Notification
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: {
+                            type: data.type, // directly use server's type
+                            message: data.toastNotification
+                        }
+                    }));
+                } else {
+                    //Notification
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: {
+                            type: 'error',
+                            message: data.message,
+                        }
+                    }));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                //Notification
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        type: 'error',
+                        message: 'An error occurred. Please try again.',
+                    }
+                }));
+            })
+            .finally(() => {
+                this.setAttribute('data-loading', 'false');
+                this.innerHTML = `<i class="fas fa-shopping-cart mr-2 text-sm"></i> Add`;
+            });
+        });
+    });
+
+
+    // Handle quantity controls
+    document.querySelectorAll('.quantity-controls').forEach(div => {
+        const qtySpan = div.querySelector('.qty');
+        const addedText = div.querySelector('.added-text');
+        const increaseBtn = div.querySelector('.increase-qty');
+        const decreaseBtn = div.querySelector('.decrease-qty');
+        const container = div.closest('.product-cart-controls');
+        const productId = container.getAttribute('data-product-id');
+
+        // Handle quantity increase
+        increaseBtn.addEventListener('click', (event) => {
+            const currentQty = parseInt(qtySpan.textContent);
+            const newQuantity = currentQty + 1;
+            
+            // stops the click from bubbling to the <a>
+            event.stopPropagation(); 
+            event.preventDefault();
+
+            // Disable buttons during request
+            increaseBtn.disabled = true;
+            decreaseBtn.disabled = true;
+            
+            qtySpan.innerHTML = `<i class="fa-solid fa-arrow-rotate-right fa-spin"></i>`;
+            updateCartItem(productId, newQuantity, qtySpan);
+        });
+
+        // Handle quantity decrease
+        decreaseBtn.addEventListener('click', (event) => {
+            const currentQty = parseInt(qtySpan.textContent);
+            const newQuantity = currentQty - 1;
+
+            // stops the click from bubbling to the <a>
+            event.stopPropagation(); 
+            event.preventDefault();
+            
+            // Disable buttons during request
+            increaseBtn.disabled = true;
+            decreaseBtn.disabled = true;
+            
+            if (newQuantity <= 0) {
+                removeCartItem(productId, container);
+            } else {
+                qtySpan.innerHTML = `<i class="fa-solid fa-arrow-rotate-right fa-spin"></i>`;
+                updateCartItem(productId, newQuantity, qtySpan);
+            }
+        });
+    });
+
+    // Update cart item quantity
+    function updateCartItem(productId, quantity, qtySpan) {
+        fetch(cartUpdateUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({
+                item_id: productId,
+                quantity: quantity,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                //cartCountSpan.textContent = data.cart_total;
+                qtySpan.textContent = quantity;
+
+                 //Notification
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        type: 'success',
+                        message: 'Cart Updated.' ,
+                    }
+                }));
+            } else {
+                // Save message and refresh
+                localStorage.setItem('notification', JSON.stringify({
+                    type: 'error',
+                    message: data.message
+                }));
+                location.reload(); // Refresh the page
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            //Notification
+            window.dispatchEvent(new CustomEvent('toast', {
+                detail: {
+                    type: 'error',
+                    message: 'An error occurred. Please try again.',
+                }
+            }));
+            qtySpan.innerHTML = quantity-1;
+        })
+        .finally(() => {
+            const controls = qtySpan.closest('.quantity-controls');
+            controls.querySelector('.increase-qty').disabled = false;
+            controls.querySelector('.decrease-qty').disabled = false;
+        });
+    }
+
+    // Remove item from cart
+    function removeCartItem(productId, container) {
+        fetch(cartRemoveUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({ item_id: productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateCartCount();
+                triggerCartAnimation();
+                
+                // Show Add button, hide controls
+                container.querySelector('.add-to-cart').classList.remove('hidden');
+                container.querySelector('.quantity-controls').classList.add('hidden');
+
+                //Notification
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        type: 'success',
+                        message: 'Cart Updated' ,
+                    }
+                }));
+            } else {
+                //Notification
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        type: 'error',
+                        message: data.message ,
+                    }
+                }));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            //Notification
+            window.dispatchEvent(new CustomEvent('toast', {
+                detail: {
+                    type: 'error',
+                    message: 'An error occurred. Please try again.',
+                }
+            }));
+        })
+        .finally(() => {
+            const controls = container.querySelector('.quantity-controls');
+            controls.querySelector('.increase-qty').disabled = false;
+            controls.querySelector('.decrease-qty').disabled = false;
+        });
+    }
+
+    document.querySelectorAll('.quantity-controls').forEach(div => {});
+
+});
+</script>
+@endsection

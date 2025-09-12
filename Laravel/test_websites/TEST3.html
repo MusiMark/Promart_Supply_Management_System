@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MX Bank Payment Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mxblue: '#0055ff',
+                        mxdark: '#001a4d',
+                        mxaccent: '#00c6ff',
+                        mxsuccess: '#00d27a'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'success': 'success 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' }
+                        },
+                        success: {
+                            '0%': { transform: 'scale(0.5)', opacity: '0' },
+                            '70%': { transform: 'scale(1.2)', opacity: '1' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f9ff, #e6f0ff);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .card {
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        }
+        
+        .input-focus {
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .input-focus:focus {
+            border-color: #0055ff;
+            box-shadow: 0 0 0 2px rgba(0, 85, 255, 0.1);
+        }
+        
+        .payment-card {
+            background: linear-gradient(135deg, #0055ff, #00c6ff);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 12px 16px;
+        }
+        
+        .summary-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .summary-value {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        
+        .card-number-display {
+            letter-spacing: 3px;
+            font-size: 1.15rem;
+        }
+        
+        .cardholder-display {
+            text-transform: uppercase;
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.08;
+        }
+        
+        .floating-1 {
+            animation-delay: 0s;
+        }
+        
+        .floating-2 {
+            animation-delay: 2s;
+        }
+        
+        .floating-3 {
+            animation-delay: 4s;
+        }
+        
+        .checkmark {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 0.8s ease-in-out forwards;
+            animation-delay: 0.8s;
+        }
+        
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .success-circle {
+            animation: success 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            animation-delay: 0.3s;
+            transform: scale(0);
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+        
+        .wave svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 120px;
+        }
+        
+        .wave .shape-fill {
+            fill: rgba(0, 85, 255, 0.05);
+        }
+        
+        /* Card flip styles */
+        .card-wrapper {
+            perspective: 1000px;
+            height: 220px;
+            margin-bottom: 30px;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        
+        .card-wrapper.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 85, 255, 0.15);
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .cvv-display {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .amount-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0055ff;
+        }
+    </style>
+</head>
+<body class="relative overflow-x-hidden">
+    <!-- Floating background elements -->
+    <div class="absolute top-20 -left-20 w-72 h-72 rounded-full bg-mxblue floating floating-1"></div>
+    <div class="absolute top-1/3 right-0 w-60 h-60 rounded-full bg-mxaccent floating floating-2"></div>
+    <div class="absolute bottom-20 left-1/4 w-64 h-64 rounded-full bg-mxblue floating floating-3"></div>
+    
+    <!-- Main container -->
+    <div class="min-h-screen flex flex-col z-10 relative">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-mxblue to-mxaccent">
+                            <span class="text-white font-bold text-xl">MX</span>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">MX Bank Payments</h1>
+                            <p class="text-xs text-gray-500">Secure Online Transactions</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="px-3 py-1.5 rounded-full bg-green-50 text-green-700 flex items-center text-sm">
+                            <i class="fas fa-lock mr-2 text-xs"></i>
+                            <span>Secure Connection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main content -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Payment Information</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Transaction summary column -->
+                    <div>
+                        <!-- Payment action -->
+                        <div class="mb-6">
+                            <div class="card bg-gradient-to-r from-mxblue to-mxaccent p-5 text-white">
+                                <h3 class="font-semibold text-lg mb-3">Secure Payment</h3>
+                                
+                                <div class="flex items-center text-sm mb-4">
+                                    <i class="fas fa-shield-alt mr-2"></i>
+                                    <span>256-bit encryption & fraud protection</span>
+                                </div>
+                                
+                                <button id="pay-button" class="w-full bg-white text-mxblue font-semibold py-3.5 rounded-lg hover:bg-gray-50 transition flex items-center justify-center">
+                                    <i class="fas fa-lock mr-3"></i> 
+                                    Pay <span id="total-amount" class="ml-1">₹2,698.92</span>
+                                </button>
+                                
+                                <div class="mt-4 flex justify-center gap-3">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard" class="h-6">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/800px-Visa_Inc._logo.svg.png" alt="Visa" class="h-6">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/American_Express_logo_%282018%29.svg/1024px-American_Express_logo_%282018%29.svg.png" alt="Amex" class="h-6">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Transaction summary -->
+                        <div class="card bg-white p-5 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-5">Transaction Summary</h2>
+                            
+                            <div class="mb-6">
+                                <h3 class="font-semibold text-gray-800 mb-3">Transaction Details</h3>
+                                
+                                <div class="summary-grid mb-4">
+                                    <div class="summary-label">Merchant:</div>
+                                    <div class="summary-value">ShopEase Online</div>
+                                    
+                                    <div class="summary-label">Transaction ID:</div>
+                                    <div class="summary-value font-mono text-sm">MX-TXN-789456123</div>
+                                    
+                                    <div class="summary-label">Date & Time:</div>
+                                    <div class="summary-value">Aug 17, 2023 · 14:30 IST</div>
+                                    
+                                    <div class="summary-label">Amount:</div>
+                                    <div class="summary-value font-semibold"><span id="base-amount">₹2,499.00</span></div>
+                                    
+                                    <div class="summary-label">Tax (8%):</div>
+                                    <div class="summary-value"><span id="tax-amount">₹199.92</span></div>
+                                </div>
+                                
+                                <div class="flex justify-between pt-3 mt-3 border-t border-gray-100 font-semibold text-lg">
+                                    <span>Total</span>
+                                    <span class="text-mxblue"><span id="calculated-total">₹2,698.92</span></span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!-- Payment card -->
+                    <div>
+                        <!-- Card flip container -->
+                        <div class="card-wrapper" id="card-wrapper">
+                            <div class="card-inner">
+                                <!-- Front of card -->
+                                <div class="card-front payment-card text-white p-5">
+                                    <div class="flex justify-between items-start mb-6">
+                                        <div>
+                                            <div class="text-lg font-bold mb-1">MX Bank</div>
+                                            <div class="text-xs opacity-90">Premium Banking</div>
+                                        </div>
+                                        <div class="text-xl">
+                                            <i class="fab fa-cc-visa"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between items-center mb-6">
+                                        <div class="card-number-display" id="card-number-display">•••• •••• •••• 4567</div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between">
+                                        <div>
+                                            <div class="text-xs opacity-80">Card Holder</div>
+                                            <div class="font-medium cardholder-display text-sm" id="cardholder-display">JOHN SMITH</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs opacity-80">Expires</div>
+                                            <div class="font-medium text-sm" id="expiry-display">12/25</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="absolute bottom-4 right-6 text-3xl opacity-10">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Back of card -->
+                                <div class="card-back bg-gradient-to-br from-mxdark to-gray-900 text-white p-6">
+                                    <div class="h-10 bg-black mt-4 mb-8"></div>
+                                    <div class="flex justify-end px-4">
+                                        <div class="cvv-display" id="cvv-display">CVV •••</div>
+                                    </div>
+                                    
+                                    <div class="mt-8 text-xs opacity-75">
+                                        <p class="mb-2">MX Bank Customer Service: 1800-123-4567</p>
+                                        <p>This card is property of MX Bank. Unauthorized use prohibited.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment form -->
+                        <form action="paymentProcessurl" method="POST">
+                            @csrf
+                        <div class="card bg-white p-5">
+                            <div class="space-y-4">
+                                <!-- Card number -->
+                                <div>
+                                    <label for="card-number" class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            id="card-number" 
+                                            name="card-number"
+                                            placeholder="1234 5678 9012 3456" 
+                                            maxlength="19"
+                                            class="input-focus w-full pl-4 pr-3 py-3 border rounded-lg focus:outline-none"
+                                        >
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+                                            <i class="far fa-credit-card"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <!-- Expiry date -->
+                                    <div>
+                                        <label for="expiry" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                                        <div class="relative">
+                                            <input 
+                                                type="text"
+                                                name="expiry" 
+                                                id="expiry" 
+                                                placeholder="MM/YY" 
+                                                maxlength="5"
+                                                class="input-focus w-full pl-4 pr-3 py-3 border rounded-lg focus:outline-none"
+                                            >
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+                                                <i class="far fa-calendar"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- CVV -->
+                                    <div>
+                                        <label for="cvv" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                                        <div class="relative">
+                                            <input 
+                                                type="text" 
+                                                id="cvv" 
+                                                name="cvv"
+                                                placeholder="123" 
+                                                maxlength="3"
+                                                class="input-focus w-full pl-4 pr-3 py-3 border rounded-lg focus:outline-none"
+                                            >
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+                                                <i class="fas fa-lock"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Cardholder name -->
+                                <div>
+                                    <label for="cardholder-name" class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            id="cardholder-name" 
+                                            name="cardholder-name"
+                                            placeholder="John Smith" 
+                                            class="input-focus w-full pl-4 pr-3 py-3 border rounded-lg focus:outline-none"
+                                        >
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+                                            <i class="far fa-user"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Total <hidden>  -->
+                                <div>
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            id="total" 
+                                            name="total"
+                                            placeholder="Total" 
+                                            class="input-focus w-full pl-4 pr-3 py-3 border rounded-lg focus:outline-none hidden"
+                                        >
+                                    </div>
+                                </div>
+                                
+                                <!-- Remember card -->
+                                <div class="flex items-center pt-2">
+                                    <input type="checkbox" id="remember-card" class="h-4 w-4 text-mxblue border-gray-300 rounded focus:ring-mxblue">
+                                    <label for="remember-card" class="ml-2 block text-sm text-gray-700">
+                                        Save card securely with MX Bank
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Security badges -->
+        <div class="container mx-auto px-4 py-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-wrap justify-center gap-6">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-sm text-mxblue"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">256-bit Encryption</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center mr-3">
+                            <i class="fas fa-lock text-sm text-green-500"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">PCI DSS Compliant</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center mr-3">
+                            <i class="fas fa-sync-alt text-sm text-purple-500"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">Instant Processing</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center mr-3">
+                            <i class="fas fa-headset text-sm text-red-500"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">24/7 Support</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-auto bg-mxdark text-white pt-12 relative">
+            <div class="wave">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>
+            <div class="container mx-auto px-4 pb-10 relative z-10">
+                <div class="text-center">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center mr-2">
+                            <span class="text-mxblue font-bold text-xl">MX</span>
+                        </div>
+                        <div class="text-xl font-medium">MX Bank</div>
+                    </div>
+                    <p class="text-blue-200 text-sm mb-6 max-w-md mx-auto">Secure banking for the digital generation. Making finance simple and accessible.</p>
+                    
+                    <div class="flex justify-center gap-4 mb-6">
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center">
+                            <i class="fab fa-facebook-f text-sm"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center">
+                            <i class="fab fa-twitter text-sm"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center">
+                            <i class="fab fa-linkedin-in text-sm"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center">
+                            <i class="fab fa-instagram text-sm"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="text-xs text-blue-300">
+                        <p>© 2023 MX Bank. All rights reserved. | <a href="#" class="hover:text-white">Privacy Policy</a> | <a href="#" class="hover:text-white">Terms of Service</a> | <a href="#" class="hover:text-white">Security</a></p>
+                        <p class="mt-1">MX Bank is regulated by the Reserve Bank of India. All deposits are insured up to ₹5,00,000.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-7 max-w-sm w-full mx-4 text-center transform transition-transform duration-300 scale-95">
+            <div class="flex justify-center mb-5">
+                <div class="w-24 h-24 rounded-full bg-mxsuccess/10 flex items-center justify-center">
+                    <div class="success-circle w-20 h-20 rounded-full bg-mxsuccess flex items-center justify-center">
+                        <svg class="checkmark w-12 h-12 text-white" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" stroke="#FFF" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">Payment Successful!</h3>
+            <p class="text-gray-600 mb-6">Thank you for your purchase with MX Bank.</p>
+            
+            <div class="bg-gray-50 rounded-xl p-5 mb-6">
+                <div class="summary-grid">
+                    <div class="summary-label">Merchant:</div>
+                    <div class="summary-value">ShopEase Online</div>
+                    
+                    <div class="summary-label">Transaction ID:</div>
+                    <div class="summary-value font-mono text-sm">MX-TXN-789456123</div>
+                    
+                    <div class="summary-label">Date & Time:</div>
+                    <div class="summary-value">Aug 17, 2023 · 14:30 IST</div>
+                    
+                    <div class="summary-label">Amount:</div>
+                    <div class="summary-value font-bold"><span id="modal-base-amount">₹2,499.00</span></div>
+                    
+                    <div class="summary-label">Tax (8%):</div>
+                    <div class="summary-value"><span id="modal-tax-amount">₹199.92</span></div>
+                    
+                    <div class="summary-label font-bold">Total:</div>
+                    <div class="summary-value font-bold text-mxblue"><span id="modal-total-amount">₹2,698.92</span></div>
+                </div>
+            </div>
+            
+            <button id="close-success" class="w-full bg-mxblue text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-800 transition">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calculate total function
+            function calculateTotal() {
+                const baseAmount = 34; // Base amount
+                const taxRate = 0.08;       // 8% tax rate
+                
+                const taxAmount = baseAmount * taxRate;
+                const totalAmount = baseAmount + taxAmount;
+                
+                return {
+                    base: baseAmount,
+                    tax: taxAmount,
+                    total: totalAmount
+                };
+            }
+            
+            // Format currency
+            function formatCurrency(amount) {
+                return 'UGX ' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            
+            // Calculate and display the amounts
+            function updateAmounts() {
+                const amounts = calculateTotal();
+                
+                // Format amounts
+                const formattedBase = formatCurrency(amounts.base);
+                const formattedTax = formatCurrency(amounts.tax);
+                const formattedTotal = formatCurrency(amounts.total);
+                
+                // Update UI elements
+                document.getElementById('base-amount').textContent = formattedBase;
+                document.getElementById('tax-amount').textContent = formattedTax;
+                document.getElementById('calculated-total').textContent = formattedTotal;
+                document.getElementById('total-amount').textContent = formattedTotal;
+                document.getElementById('total').value = formattedTotal;
+                document.getElementById('modal-base-amount').textContent = formattedBase;
+                document.getElementById('modal-tax-amount').textContent = formattedTax;
+                document.getElementById('modal-total-amount').textContent = formattedTotal;
+            }
+            
+            // Call the function to update amounts on page load
+            updateAmounts();
+            
+            // Rest of the JavaScript functionality...
+            const cardNumberInput = document.getElementById('card-number');
+            const expiryInput = document.getElementById('expiry');
+            const cvvInput = document.getElementById('cvv');
+            const cardholderInput = document.getElementById('cardholder-name');
+            const cardWrapper = document.getElementById('card-wrapper');
+            
+            const cardNumberDisplay = document.getElementById('card-number-display');
+            const expiryDisplay = document.getElementById('expiry-display');
+            const cvvDisplay = document.getElementById('cvv-display');
+            const cardholderDisplay = document.getElementById('cardholder-display');
+            
+            const payButton = document.getElementById('pay-button');
+            const successModal = document.getElementById('success-modal');
+            const closeSuccess = document.getElementById('close-success');
+            
+            // Format card number as user types
+            cardNumberInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                // Format with spaces every 4 digits
+                let formatted = '';
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) formatted += ' ';
+                    formatted += value[i];
+                }
+                
+                // Update input value
+                e.target.value = formatted;
+                
+                // Update card display with formatted number
+                cardNumberDisplay.textContent = formatted || '•••• •••• •••• 4567';
+            });
+            
+            // Format expiry date as MM/YY
+            expiryInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                
+                e.target.value = value;
+                expiryDisplay.textContent = value || '12/25';
+            });
+            
+            // Update CVV display and flip card
+            cvvInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                // Limit to 3 digits
+                if (value.length > 3) {
+                    value = value.substring(0, 3);
+                }
+                
+                e.target.value = value;
+                
+                if (value) {
+                    cvvDisplay.textContent = 'CVV ' + value;
+                } else {
+                    cvvDisplay.textContent = 'CVV •••';
+                }
+            });
+            
+            // Flip card on CVV focus
+            cvvInput.addEventListener('focus', function() {
+                cardWrapper.classList.add('flipped');
+            });
+            
+            cvvInput.addEventListener('blur', function() {
+                cardWrapper.classList.remove('flipped');
+            });
+            
+            // Flip card on hover
+            cardWrapper.addEventListener('mouseenter', function() {
+                if (!cvvInput.matches(':focus')) {
+                    cardWrapper.classList.add('flipped');
+                }
+            });
+            
+            cardWrapper.addEventListener('mouseleave', function() {
+                if (!cvvInput.matches(':focus')) {
+                    cardWrapper.classList.remove('flipped');
+                }
+            });
+            
+            // Update cardholder name
+            cardholderInput.addEventListener('input', function(e) {
+                cardholderDisplay.textContent = e.target.value.toUpperCase() || 'JOHN SMITH';
+            });
+            
+            // Payment processing
+            if (payButton) {
+                payButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Show loading state
+                    const originalText = payButton.innerHTML;
+                    payButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i> Processing...';
+                    payButton.disabled = true;
+
+                    const form = document.querySelector('form');
+                    form.submit();
+                    
+                    // // Simulate payment processing
+                    // setTimeout(() => {
+                    //     // Show success modal
+                    //     successModal.classList.remove('hidden');
+                        
+                    //     // Reset button
+                    //     payButton.innerHTML = originalText;
+                    //     payButton.disabled = false;
+                    // }, 1500);
+                });
+            }
+            
+            if (closeSuccess) {
+                closeSuccess.addEventListener('click', function() {
+                    successModal.classList.add('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
