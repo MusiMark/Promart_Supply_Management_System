@@ -3,6 +3,22 @@
 @section('title', 'Checkout')
 
 @section('content')
+<style>
+    /* Smooth show/hide animation for the mobile money phone field */
+    #phone-number-form {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        margin-bottom: 0; /* no space when hidden */
+        transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+    }
+
+    #phone-number-form.show {
+        max-height: 200px; /* enough to reveal its contents */
+        opacity: 1;
+        margin-bottom: 1rem; /* matches Tailwind mb-4 spacing when visible */
+    }
+</style>
 <?php 
     // Calculate order summary values
     $subtotal = 0;
@@ -107,23 +123,23 @@
                                 Mobile Money
                             </label>
                         </div>
+
+                        <!-- Mobile Money Form (animated) -->
+                        <div id="phone-number-form" class="mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                    <input type="text" id="phone-number" name="phone_number" placeholder="0777777777" value="0777777777"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFC000]">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex items-center">
                             <input type="radio" id="cash-on-delivery" name="payment_method" value="cash_on_delivery" class="h-4 w-4 text-[#C13608] focus:ring-[#FFC000]">
                             <label for="cash-on-delivery" class="ml-3 block text-sm font-medium text-gray-700">
                                 Cash on Delivery
                             </label>
-                        </div>
-                    </div>
-                    
-                    <!-- Mobile Money Form -->
-                    <div id="phone-number-form" class="hidden">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                                <input type="text" id="phone-number" name="phone_number" placeholder="0777777777" value="0777777777"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFC000]">
-                            </div>
-                            
                         </div>
                     </div>
                     {{-- Other things to send --}}
@@ -187,16 +203,24 @@
 @section('script')
 <script>
     // Toggle payment method fields
-    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const phoneNumberForm = document.getElementById('phone-number-form');
-            if(this.value === 'mobile_money') {
-                phoneNumberForm.style.display = 'block';
-            } else {
-                phoneNumberForm.style.display = 'none';
-            }
-        });
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const phoneNumberForm = document.getElementById('phone-number-form');
+
+    function updatePhoneFormVisibility() {
+        const selected = document.querySelector('input[name="payment_method"]:checked');
+        if (selected && selected.value === 'mobile_money') {
+            phoneNumberForm.classList.add('show');
+        } else {
+            phoneNumberForm.classList.remove('show');
+        }
+    }
+
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', updatePhoneFormVisibility);
     });
+
+    // Initial state on load (handles validation back / pre-filled forms)
+    updatePhoneFormVisibility();
     
     // Form validation
     document.getElementById('checkout-form').addEventListener('submit', function(e) {

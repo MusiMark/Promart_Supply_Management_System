@@ -123,6 +123,10 @@ class CartController extends Controller
      */
     public function checkoutIndex()
     {
+        if (!\Illuminate\Support\Facades\Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $cart = session()->get('cart', []);
         $cartlist = [];
 
