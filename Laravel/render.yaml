@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: Promart_Supply_Management_System-1
+    env: php
+    buildCommand: "composer install"
+    startCommand: "php artisan serve --host 0.0.0.0 --port $PORT"
