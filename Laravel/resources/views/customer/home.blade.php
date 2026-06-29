@@ -28,7 +28,7 @@
             style="background-image: url('https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1800&q=80')">
             <div class="slide-overlay"></div>
             <div class="hero-content">
-                <h1>Fashion <span>Trends 2023</span></h1>
+                <h1>Fashion <span>Trends 2026</span></h1>
                 <p>Refresh your wardrobe with the hottest styles of the season. Free shipping on orders over $50!</p>
                 <a href="/products/Fashion" class="hero-btn">Shop Fashion <i class="fas fa-tshirt"></i></a>
             </div>

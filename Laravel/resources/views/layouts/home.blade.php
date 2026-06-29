@@ -1382,7 +1382,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2023 ProMart. All Rights Reserved.</p>
+            <p>&copy; 2026 ProMart. All Rights Reserved.</p>
         </div>
     </footer>
 

@@ -21,7 +21,7 @@
                                 Verified Account
                             </span>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                Member since: Jan 2023
+                                Member since: Jan 2026
                             </span>
                         </div>
                     </div>
@@ -209,7 +209,7 @@
                                         <div class="text-sm font-medium text-gray-900">#PM-12458</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">Jul 12, 2023</div>
+                                        <div class="text-sm text-gray-900">Jul 12, 2026</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">3 Items</div>
@@ -231,7 +231,7 @@
                                         <div class="text-sm font-medium text-gray-900">#PM-12432</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">Jul 5, 2023</div>
+                                        <div class="text-sm text-gray-900">Jul 5, 2026</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">1 Item</div>
@@ -253,7 +253,7 @@
                                         <div class="text-sm font-medium text-gray-900">#PM-12389</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">Jun 28, 2023</div>
+                                        <div class="text-sm text-gray-900">Jun 28, 2026</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">5 Items</div>

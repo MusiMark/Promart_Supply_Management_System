@@ -155,7 +155,7 @@
             
             <div class="bg-gray-50 p-4 text-center">
                 <p class="text-xs text-gray-500">
-                    © 2023 ProMart. All rights reserved. Privacy Policy | Terms of Service
+                    © 2026 ProMart. All rights reserved. Privacy Policy | Terms of Service
                 </p>
             </div>
         </div>
