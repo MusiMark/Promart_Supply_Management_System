@@ -33,15 +33,15 @@ RUN cp -n .env.example .env || true
 # 9. Optimize the Composer autoloader
 RUN composer dump-autoload --no-dev --optimize
 
-# 10. Clear ALL hardcoded caches so Laravel reads Render's environment dashboard live
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
-
-# 11. Set appropriate permissions for Laravel storage
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# 10. CRITICAL: Set permissions for storage, cache, AND the database directory
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 # Render automatically detects the port Apache exposes (80)
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+# 11. CRITICAL: Clear caches dynamically only when the container starts live
+CMD php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan route:clear && \
+    php artisan view:clear && \
+    apache2-foreground
