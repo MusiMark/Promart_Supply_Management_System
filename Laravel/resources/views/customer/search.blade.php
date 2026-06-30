@@ -64,7 +64,7 @@
             <a href="/products/{{$product->category_id}}/{{$product->subcategory_id}}/{{$product->id}}">
                 {{-- Image and badges --}}
                 <div class="relative">
-                    <img src="{{ $product->image_url ?? 'https://images.unsplash.com/vector-1738237080330-b9d0755ede07?q=80&w=2148&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}"
+                    <img src="{{ $product->image_url ?? asset('storage/logo/placeholder.avif') }}"
                         alt="{{ $product->product_name }}" class="w-full h-56 object-cover" />
                     <div class="absolute top-3 left-3 flex flex-col space-y-2">
                         @if(isset($product->badge))

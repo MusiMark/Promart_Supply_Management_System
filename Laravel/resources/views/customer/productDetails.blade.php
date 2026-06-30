@@ -14,7 +14,10 @@
 //         "price" => 3500000.0,
 //         "original_price" => 3990000.0,
 //         "discount" => 490000.0,
-//         "image_url" => "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+//         "image_url" => [
+//             "storage/images/dell_inspiron_15.jpg",
+//             "storage/images/dell_inspiron_15_2.jpg",
+//              ],
 //         "ratings" => 3.0,
 //         "previews" => 477,
 //         "stock" => 12,
@@ -90,17 +93,16 @@
             <!-- Product Gallery -->
             <div class="lg:pr-8">
                 <div class="gallery-main rounded-xl overflow-hidden mb-4">
-                    <img id="mainImage" src="{{ $product->image_url ?? 'https://images.unsplash.com/vector-1738237080330-b9d0755ede07?q=80&w=2148&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}" alt="{{ $product->product_name }}" class="w-full h-auto rounded-xl" />
+                    <img id="mainImage" src="{{ asset($productImages->first() ?? 'storage/logo/placeholder.avif') }}" alt="{{ $product->product_name }}" class="w-full h-auto rounded-xl" />
                 </div>
                 <div class="grid grid-cols-4 gap-3">
-                    @for($i = 0; $i < 2; $i++)
-                    <div class="gallery-thumb rounded-lg overflow-hidden {{ $i == 0 ? 'active' : '' }}" onclick="changeImage('{{ $product->image_url }}')">
-                        <img src="{{ $product->image_url ?? 'https://images.unsplash.com/vector-1738237080330-b9d0755ede07?q=80&w=2148&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}" alt="Thumbnail {{ $i+1 }}" class="w-full h-24 object-cover" />
+                    @foreach($productImages->skip(1) as $image)
+                    <div class="gallery-thumb rounded-lg overflow-hidden {{ $loop->first ? 'active' : '' }}" onclick="changeImage('{{ asset($image) }}')">
+                        <img src="{{ asset($image) }}" alt="Thumbnail {{ $loop->iteration }}" class="w-full h-24 object-cover" />
                     </div>
-                    @endfor
+                    @endforeach
                 </div>
             </div>
-
             <!-- Product Info -->
             <div>
                 <div class="flex justify-between items-start mb-2">

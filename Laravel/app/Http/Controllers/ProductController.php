@@ -144,21 +144,16 @@ class ProductController extends Controller
         ;
         if($table1->sub_category_id == $sub_category && $table1->category_id == $category){
             $product = DB::table('products')->where('id', $product_id)->first();
+            $productImages = DB::table('product_images')->where('product_id', $product_id)->pluck('url');
             return view('customer.productDetails' , [
                 'product' => $product,
                 'sub_category' => $table1->sub_category,
                 'category' =>  $table1->category,
+                'productImages' => $productImages
             ]);
         }
 
-        dd('Failed');
-        
-
-        if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
-        }
-
-        
+        //dd('Failed'); 
     }
 
 public function search(Request $request)

@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('products', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('subcategory_id');
-        //     $table->string('product_name');
-        //     $table->string('description');
-        //     $table->double('price');
-        //     $table->integer('stock_quatity');
-        // });
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('subcategory_id');
+            $table->string('product_name');
+            $table->string('description');
+            $table->double('price');
+            $table->integer('stock_quatity');
+            $table->string('image_url');
+            $table->double('ratings');
+            $table->integer('previews');
+        });
     }
 
     /**

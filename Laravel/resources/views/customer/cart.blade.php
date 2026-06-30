@@ -55,7 +55,7 @@
                                 </button>
                                 <a href="/products/{{$item->category_id}}/{{$item->subcategory_id}}/{{$item->id}}"
                                     class="flex items-center">
-                                    <img src="{{ $item->image_url ?? 'https://images.unsplash.com/vector-1738237080330-b9d0755ede07?q=80&w=2148&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}"
+                                    <img src="{{ $item->image_url ?? asset('storage/logo/placeholder.avif') }}"
                                         alt="{{ $item->product_name }}" class="w-16 h-16 object-cover rounded-lg" />
                                     <div class="ml-4">
                                         <h3 class="font-medium text-gray-800">{{ $item->product_name }}</h3>
