@@ -10,13 +10,22 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy app files
+# 1. Copy only package definitions first (Optimizes Docker layer caching)
+COPY composer.json composer.lock ./
+
+# 2. Install dependencies without running project-specific scripts yet
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
+
+# 3. Copy the rest of the application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# 4. Create an environment file if it does not exist (Prevents Artisan boot crashes)
+RUN cp -n .env.example .env || true
 
-# Laravel setup
+# 5. Optimize the Composer autoloader now that all files are copied
+RUN composer dump-autoload --no-dev --optimize
+
+# 6. Clear Laravel configuration caches
 RUN php artisan config:clear && \
     php artisan route:clear && \
     php artisan view:clear
