@@ -18,17 +18,15 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# 5. Handle the project structure safely (checks if files are inside the "Laravel" subfolder or at root)
-COPY composer.json composer.loc[k] ./
-COPY Laravel/composer.json Laravel/composer.loc[k] ./var/www/html/ 2>/dev/null || true
+# 5. Copy package definitions explicitly from the Laravel subfolder
+COPY Laravel/composer.json Laravel/composer.lock ./
 
 # 6. Install dependencies
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
 
-# 7. Copy your Laravel application files
+# 7. Copy all code, then lift contents up from the subfolder to the root directory
 COPY . .
-# If your files were nested under a "Laravel/" folder, pull them up to the root level
-RUN if [ -d "Laravel" ]; then cp -r Laravel/* . && rm -rf Laravel; fi
+RUN cp -r Laravel/* . && rm -rf Laravel
 
 # 8. Create an environment file if it does not exist
 RUN cp -n .env.example .env || true
