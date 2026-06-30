@@ -1,66 +1,142 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Jun 30, 2026 at 07:50 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+CREATE TABLE "cache" (
+  "key" TEXT PRIMARY KEY,
+  "value" TEXT NOT NULL,
+  "expiration" INTEGER NOT NULL
+);
+CREATE TABLE "cache_locks" (
+  "key" TEXT PRIMARY KEY,
+  "owner" TEXT NOT NULL,
+  "expiration" INTEGER NOT NULL
+);
+CREATE TABLE "categories" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "category" TEXT NOT NULL UNIQUE
+);
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+CREATE TABLE "customers" (
+  "id" TEXT PRIMARY KEY,
+  "phone" TEXT DEFAULT NULL,
+  "city" TEXT DEFAULT NULL,
+  "address" TEXT DEFAULT NULL,
+  "age_group" TEXT DEFAULT NULL,
+  "gender" TEXT DEFAULT NULL,
+  "income_bracket" TEXT DEFAULT NULL,
+  "purchase_frequency" TEXT DEFAULT NULL,
+  "shopping_preferences" TEXT DEFAULT NULL
+);
 
+CREATE TABLE "failed_jobs" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "uuid" TEXT NOT NULL UNIQUE,
+  "connection" TEXT NOT NULL,
+  "queue" TEXT NOT NULL,
+  "payload" TEXT NOT NULL,
+  "exception" TEXT NOT NULL,
+  "failed_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+CREATE TABLE "jobs" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "queue" TEXT NOT NULL,
+  "payload" TEXT NOT NULL,
+  "attempts" INTEGER NOT NULL,
+  "reserved_at" INTEGER DEFAULT NULL,
+  "available_at" INTEGER NOT NULL,
+  "created_at" INTEGER NOT NULL
+);
+CREATE INDEX "jobs_queue_index" ON "jobs" ("queue");
 
---
--- Database: `laravel`
---
+CREATE TABLE "job_batches" (
+  "id" TEXT PRIMARY KEY,
+  "name" TEXT NOT NULL,
+  "total_jobs" INTEGER NOT NULL,
+  "pending_jobs" INTEGER NOT NULL,
+  "failed_jobs" INTEGER NOT NULL,
+  "failed_job_ids" TEXT NOT NULL,
+  "options" TEXT DEFAULT NULL,
+  "cancelled_at" INTEGER DEFAULT NULL,
+  "created_at" INTEGER NOT NULL,
+  "finished_at" INTEGER DEFAULT NULL
+);
 
--- --------------------------------------------------------
+CREATE TABLE "migrations" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "migration" TEXT NOT NULL,
+  "batch" INTEGER NOT NULL
+);
 
---
--- Table structure for table `cache`
---
+CREATE TABLE "order" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "user_id" TEXT NOT NULL,
+  "status" TEXT NOT NULL,
+  "amount" REAL NOT NULL,
+  "delivery_date" DATETIME DEFAULT CURRENT_TIMESTAMP,
+  "payment_method" TEXT NOT NULL,
+  "shipping_address" TEXT NOT NULL
+);
 
-CREATE TABLE `cache` (
-  `key` varchar(255) NOT NULL,
-  `value` mediumtext NOT NULL,
-  `expiration` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE "order_details" (
+  "order_id" TEXT NOT NULL,
+  "product_id" TEXT NOT NULL,
+  "quantity" INTEGER NOT NULL,
+  "price" REAL NOT NULL,
+  "notes" TEXT DEFAULT NULL
+);
 
--- --------------------------------------------------------
+CREATE TABLE "password_reset_tokens" (
+  "email" TEXT PRIMARY KEY,
+  "token" TEXT NOT NULL,
+  "created_at" DATETIME DEFAULT NULL
+);
 
---
--- Table structure for table `cache_locks`
---
+CREATE TABLE "products" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "subcategory_id" TEXT NOT NULL,
+  "product_name" TEXT NOT NULL,
+  "description" TEXT NOT NULL,
+  "price" REAL NOT NULL,
+  "stock_quatity" INTEGER NOT NULL,
+  "image_url" TEXT DEFAULT NULL,
+  "ratings" REAL DEFAULT NULL,
+  "previews" INTEGER DEFAULT NULL
+);
 
-CREATE TABLE `cache_locks` (
-  `key` varchar(255) NOT NULL,
-  `owner` varchar(255) NOT NULL,
-  `expiration` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE "product_images" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "product_id" TEXT NOT NULL,
+  "url" TEXT NOT NULL
+);
 
--- --------------------------------------------------------
+CREATE TABLE "sessions" (
+  "id" TEXT PRIMARY KEY,
+  "user_id" INTEGER DEFAULT NULL,
+  "ip_address" TEXT DEFAULT NULL,
+  "user_agent" TEXT DEFAULT NULL,
+  "payload" TEXT NOT NULL,
+  "last_activity" INTEGER NOT NULL
+);
+CREATE INDEX "sessions_user_id_index" ON "sessions" ("user_id");
+CREATE INDEX "sessions_last_activity_index" ON "sessions" ("last_activity");
 
---
--- Table structure for table `categories`
---
+CREATE TABLE "sub_categories" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "category_id" TEXT NOT NULL,
+  "sub_category" TEXT NOT NULL UNIQUE
+);
 
-CREATE TABLE `categories` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `category` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE "users" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "name" TEXT NOT NULL,
+  "email" TEXT NOT NULL UNIQUE,
+  "role" TEXT NOT NULL,
+  "email_verified_at" DATETIME DEFAULT NULL,
+  "password" TEXT NOT NULL,
+  "remember_token" TEXT DEFAULT NULL,
+  "created_at" DATETIME DEFAULT NULL,
+  "updated_at" DATETIME DEFAULT NULL
+);
 
---
--- Dumping data for table `categories`
---
-
-INSERT INTO `categories` (`id`, `category`) VALUES
+INSERT INTO "categories" ("id", "category") VALUES
 (9, 'Agriculture, Food & Beverage'),
 (7, 'Baby Products'),
 (4, 'Beauty'),
@@ -73,92 +149,7 @@ INSERT INTO `categories` (`id`, `category`) VALUES
 (5, 'Sports'),
 (11, 'Tools & Hardware');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `customers`
---
-
-CREATE TABLE `customers` (
-  `id` char(20) NOT NULL,
-  `phone` varchar(255) DEFAULT NULL,
-  `city` varchar(255) DEFAULT NULL,
-  `address` text DEFAULT NULL,
-  `age_group` enum('18-25','26-35','36-45','46-55','56-65','65+') DEFAULT NULL,
-  `gender` enum('male','female') DEFAULT NULL,
-  `income_bracket` enum('low','middle-low','middle','middle-high','high','prefer-not-to-say') DEFAULT NULL,
-  `purchase_frequency` enum('weekly','monthly','quarterly','yearly','occasional') DEFAULT NULL,
-  `shopping_preferences` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `failed_jobs`
---
-
-CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `jobs`
---
-
-CREATE TABLE `jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) NOT NULL,
-  `payload` longtext NOT NULL,
-  `attempts` tinyint(3) UNSIGNED NOT NULL,
-  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
-  `available_at` int(10) UNSIGNED NOT NULL,
-  `created_at` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `job_batches`
---
-
-CREATE TABLE `job_batches` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `total_jobs` int(11) NOT NULL,
-  `pending_jobs` int(11) NOT NULL,
-  `failed_jobs` int(11) NOT NULL,
-  `failed_job_ids` longtext NOT NULL,
-  `options` mediumtext DEFAULT NULL,
-  `cancelled_at` int(11) DEFAULT NULL,
-  `created_at` int(11) NOT NULL,
-  `finished_at` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `migrations`
---
-
-CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+INSERT INTO "migrations" ("id", "migration", "batch") VALUES
 (1, '0001_01_01_000000_create_users_table', 1),
 (2, '0001_01_01_000001_create_cache_table', 1),
 (3, '0001_01_01_000002_create_jobs_table', 1),
@@ -166,71 +157,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (6, '2025_08_04_063027_products', 2),
 (7, '2025_08_04_174041_order', 3);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `order`
---
-
-CREATE TABLE `order` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` varchar(255) NOT NULL,
-  `status` enum('pending','cancelled','delivered') NOT NULL,
-  `amount` double NOT NULL,
-  `delivery_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `payment_method` enum('bank','mobile money') NOT NULL,
-  `shipping_address` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `order_details`
---
-
-CREATE TABLE `order_details` (
-  `order_id` varchar(255) NOT NULL,
-  `product_id` varchar(255) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `price` double NOT NULL,
-  `notes` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `password_reset_tokens`
---
-
-CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `products`
---
-
-CREATE TABLE `products` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `subcategory_id` varchar(255) NOT NULL,
-  `product_name` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `price` double NOT NULL,
-  `stock_quatity` int(11) NOT NULL,
-  `image_url` varchar(255) DEFAULT NULL,
-  `ratings` double DEFAULT NULL,
-  `previews` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `products`
---
-
-INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `price`, `stock_quatity`, `image_url`, `ratings`, `previews`) VALUES
+INSERT INTO "products" ("id", "subcategory_id", "product_name", "description", "price", "stock_quatity", "image_url", "ratings", "previews") VALUES
 (1, '1', 'Dell Inspiron 15', '15.6-inch FHD Laptop, i5, 8GB RAM', 3500000, 20, 'storage/product_images/Dell Inspiron 15_1.jpeg', 3, 477),
 (2, '1', 'HP Pavilion x360', 'Convertible Laptop, Intel i7, 16GB RAM', 4200000, 15, 'storage/product_images/HP Pavilion x360_1.avif', 4.5, 157),
 (3, '1', 'Lenovo ThinkPad X1 Carbon', 'Business Laptop, i7, 16GB RAM', 5000000, 10, 'storage/product_images/Lenovo ThinkPad X1 Carbon_1.jpg', 5, 207),
@@ -403,14 +330,14 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (170, '6', 'Samsung Odyssey G9 Curved Monitor', 'Ultra-wide gaming experience', 1500000, 3, NULL, 5, 291),
 (171, '6', 'Nintendo Switch Pro Controller', 'Enhanced control for Switch', 180000, 20, NULL, 4, 397),
 (172, '7', 'Nike Dri-FIT Sports T-Shirt', 'Breathable athletic T-shirt', 30000, 50, 'storage/product_images/Nike Dri-FIT Sports T-Shirt_1.jfif', 5, 160),
-(173, '7', 'Levi\'s 511 Slim Fit Jeans', 'Classic slim fit denim', 80000, 40, 'storage/product_images/Levi\'s 511 Slim Fit Jeans_1.jfif', 3, 463),
-(174, '7', 'Arrow Long Sleeve Dress Shirt', 'Men\'s formal cotton shirt', 60000, 35, 'storage/product_images/Arrow Long Sleeve Dress Shirt_1.avif', 3.5, 434),
+(173, '7', 'Levi''s 511 Slim Fit Jeans', 'Classic slim fit denim', 80000, 40, 'storage/product_images/Levi''s 511 Slim Fit Jeans_1.jfif', 3, 463),
+(174, '7', 'Arrow Long Sleeve Dress Shirt', 'Men''s formal cotton shirt', 60000, 35, 'storage/product_images/Arrow Long Sleeve Dress Shirt_1.avif', 3.5, 434),
 (175, '7', 'Champion Pullover Hoodie', 'Comfortable hoodie with logo', 70000, 25, 'storage/product_images/Champion Pullover Hoodie_1.avif', 5, 279),
 (176, '7', 'Adidas Classic Cargo Shorts', 'Casual cargo shorts', 50000, 45, NULL, 4, 493),
-(177, '7', 'Polo Ralph Lauren Classic Polo', 'Men\'s polo shirt', 40000, 50, NULL, 4.5, 227),
+(177, '7', 'Polo Ralph Lauren Classic Polo', 'Men''s polo shirt', 40000, 50, NULL, 4.5, 227),
 (178, '7', 'The North Face Windbreaker Jacket', 'Lightweight waterproof jacket', 90000, 20, NULL, 5, 55),
 (179, '7', 'Under Armour Tech Sweatpants', 'Performance sweatpants', 60000, 30, NULL, 4, 449),
-(180, '7', 'Calvin Klein Business Suit', 'Men\'s tailored suit', 150000, 10, NULL, 5, 227),
+(180, '7', 'Calvin Klein Business Suit', 'Men''s tailored suit', 150000, 10, NULL, 5, 227),
 (181, '7', 'Tommy Hilfiger Casual Vest', 'Stylish casual vest', 50000, 25, NULL, 5, 188),
 (182, '7', 'Banana Republic Knit Cardigan', 'Soft knitted cardigan', 65000, 15, NULL, 4, 209),
 (183, '7', 'H&M Basic Tank Top', 'Simple cotton tank top', 35000, 45, NULL, 5, 433),
@@ -421,11 +348,11 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (188, '7', 'Uniqlo Wool Sweater', 'Warm wool sweater', 70000, 22, NULL, 3.5, 323),
 (189, '7', 'Burberry Long Wool Coat', 'Luxury overcoat', 180000, 8, NULL, 3.5, 223),
 (190, '7', 'GAP Cotton Pajama Set', 'Comfortable pajamas', 30000, 50, NULL, 3, 94),
-(191, '7', 'Levi\'s Leather Belt', 'Classic leather belt', 25000, 45, NULL, 3, 205),
+(191, '7', 'Levi''s Leather Belt', 'Classic leather belt', 25000, 45, NULL, 3, 205),
 (192, '7', 'New Era Baseball Cap', 'Casual baseball cap', 20000, 60, NULL, 3, 241),
 (193, '7', 'Timberland Leather Gloves', 'Warm leather gloves', 30000, 20, NULL, 4, 88),
 (194, '7', 'H&M Cotton Socks Pack', 'Pack of 5 socks', 15000, 70, NULL, 3.5, 121),
-(195, '7', 'Casio Analogue Wristwatch', 'Men\'s stylish wristwatch', 250000, 10, NULL, 5, 290),
+(195, '7', 'Casio Analogue Wristwatch', 'Men''s stylish wristwatch', 250000, 10, NULL, 5, 290),
 (196, '7', 'Eastpak Casual Backpack', 'Durable everyday backpack', 40000, 30, NULL, 5, 136),
 (197, '7', 'Clarks Leather Casual Shoes', 'Comfortable loafers', 90000, 25, NULL, 4, 213),
 (198, '7', 'Nike Air Max Sneakers', 'Sporty sneakers', 85000, 35, NULL, 3, 157),
@@ -434,7 +361,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (201, '8', 'Zara Floral Summer Dress', 'Lightweight flowy dress', 100000, 25, 'storage/product_images/Zara Floral Summer Dress_1.jpg', 3, 350),
 (202, '8', 'Mango Silk Blouse', 'Elegant silk blouse', 70000, 30, 'storage/product_images/Mango Silk Blouse_1.jpg', 3.5, 476),
 (203, '8', 'ASOS A-Line Skirt', 'Casual A-line skirt', 50000, 40, 'storage/product_images/ASOS A-Line Skirt_1.jpg', 3.5, 380),
-(204, '8', 'Levi\'s 721 Skinny Jeans', 'Classic skinny jeans', 80000, 35, NULL, 3, 421),
+(204, '8', 'Levi''s 721 Skinny Jeans', 'Classic skinny jeans', 80000, 35, NULL, 3, 421),
 (205, '8', 'Uniqlo Knit Cardigan', 'Soft knitted cardigan', 65000, 20, NULL, 3.5, 464),
 (206, '8', 'Gap Denim Jacket', 'Casual denim jacket', 90000, 15, NULL, 5, 105),
 (207, '8', 'Calzedonia Stretch Leggings', 'Comfortable leggings', 40000, 50, NULL, 4, 439),
@@ -462,7 +389,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (229, '8', 'H&M Wool Winter Coat', 'Warm winter coat', 150000, 10, NULL, 3.5, 446),
 (230, '9', 'Clarks Leather Casual Shoes', 'Comfortable everyday shoes', 90000, 20, NULL, 4.5, 130),
 (231, '9', 'Nike Air Max Sneakers', 'Sporty sneakers', 85000, 35, NULL, 4.5, 163),
-(232, '9', 'Allen Edmonds Dress Shoes', 'Luxury men\'s dress shoes', 100000, 15, NULL, 3, 377),
+(232, '9', 'Allen Edmonds Dress Shoes', 'Luxury men''s dress shoes', 100000, 15, NULL, 3, 377),
 (233, '9', 'Birkenstock Leather Sandals', 'Comfortable sandals', 60000, 25, NULL, 4.5, 444),
 (234, '9', 'Timberland Waterproof Boots', 'Durable outdoor boots', 120000, 10, NULL, 3, 138),
 (235, '9', 'Skechers Slip-On Shoes', 'Casual slip-on sneakers', 80000, 25, NULL, 4, 210),
@@ -471,8 +398,8 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (238, '9', 'Dr. Martens Leather Boots', 'Iconic boots', 150000, 8, NULL, 5, 459),
 (239, '9', 'Steve Madden Ankle Boots', 'Fashion ankle boots', 110000, 15, NULL, 4, 431),
 (240, '9', 'Columbia Hiking Boots', 'Outdoor hiking shoes', 130000, 8, NULL, 3.5, 276),
-(241, '9', 'Nike Kids\' Sneakers', 'Colorful athletic shoes', 50000, 60, NULL, 4.5, 491),
-(242, '9', 'Clarks Kids\' Shoes', 'Durable school shoes', 55000, 50, NULL, 3, 223),
+(241, '9', 'Nike Kids'' Sneakers', 'Colorful athletic shoes', 50000, 60, NULL, 4.5, 491),
+(242, '9', 'Clarks Kids'' Shoes', 'Durable school shoes', 55000, 50, NULL, 3, 223),
 (243, '9', 'Skechers Casual Sneakers', 'Comfortable sneakers', 85000, 30, NULL, 3, 496),
 (244, '9', 'Vans Classic Slip-Ons', 'Casual skate shoes', 75000, 25, NULL, 4, 406),
 (245, '9', 'Timberland Work Boots', 'Heavy-duty work boots', 150000, 10, NULL, 5, 494),
@@ -483,10 +410,10 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (250, '9', 'Nike Basketball Shoes', 'High-top basketball shoes', 95000, 12, NULL, 4, 451),
 (251, '9', 'Adidas Cloudfoam Sneakers', 'Comfortable athletic shoes', 75000, 30, NULL, 4, 443),
 (252, '9', 'New Balance Walking Shoes', 'Supportive walking shoes', 65000, 25, NULL, 5, 361),
-(253, '9', 'Kids\' Sports Sneakers', 'Colorful athletic shoes', 40000, 55, NULL, 3, 427),
-(254, '9', 'Women\'s Fashion Sneakers', 'Trendy sneakers', 85000, 30, NULL, 3, 102),
-(255, '9', 'Men\'s Leather Loafers', 'Casual leather loafers', 95000, 12, NULL, 5, 79),
-(256, '9', 'Women\'s Ankle Boots', 'Fashionable ankle boots', 110000, 15, NULL, 3.5, 492),
+(253, '9', 'Kids'' Sports Sneakers', 'Colorful athletic shoes', 40000, 55, NULL, 3, 427),
+(254, '9', 'Women''s Fashion Sneakers', 'Trendy sneakers', 85000, 30, NULL, 3, 102),
+(255, '9', 'Men''s Leather Loafers', 'Casual leather loafers', 95000, 12, NULL, 5, 79),
+(256, '9', 'Women''s Ankle Boots', 'Fashionable ankle boots', 110000, 15, NULL, 3.5, 492),
 (257, '9', 'Unisex Rain Boots', 'Waterproof rain boots', 95000, 10, NULL, 5, 370),
 (258, '10', 'Michael Kors Silver Pendant Necklace', 'Elegant sterling silver necklace', 30000, 20, NULL, 3.5, 323),
 (259, '10', 'Pandora Charm Bracelet', 'Customizable charm bracelet', 50000, 15, NULL, 3.5, 454),
@@ -592,7 +519,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (359, '13', 'Scandinavian Armchair', 'Comfortable and stylish', 280000, 7, NULL, 3, 400),
 (360, '13', 'Luxury Ottoman', 'Upholstered footstool', 90000, 20, NULL, 3, 129),
 (361, '13', 'Outdoor Patio Set', 'Durable outdoor furniture', 650000, 4, NULL, 4.5, 298),
-(362, '13', 'Kids\' Study Desk', 'Adjustable height desk', 150000, 12, NULL, 5, 150),
+(362, '13', 'Kids'' Study Desk', 'Adjustable height desk', 150000, 12, NULL, 5, 150),
 (363, '13', 'Contemporary Floor Lamp', 'Modern lighting fixture', 70000, 25, NULL, 3.5, 256),
 (364, '13', 'Vintage Writing Desk', 'Classic wooden desk', 250000, 9, NULL, 3, 332),
 (365, '13', 'Furnitech Bedside Lamp', 'Stylish bedroom lighting', 45000, 20, NULL, 4, 391),
@@ -605,7 +532,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (372, '14', 'Ceramic Dinner Plate Set', 'Elegant 6-piece dinnerware for family meals', 60000, 30, NULL, 3.5, 322),
 (373, '14', 'Glass Measuring Cups', 'Accurate measurement cups for baking and cooking', 20000, 40, NULL, 3, 326),
 (374, '14', 'Silicone Baking Mat', 'Reusable non-stick baking sheet liner', 15000, 50, NULL, 3, 162),
-(375, '14', 'Chef\'s Kitchen Knife Set', 'High-quality stainless steel knives for precision', 120000, 20, NULL, 3, 237),
+(375, '14', 'Chef''s Kitchen Knife Set', 'High-quality stainless steel knives for precision', 120000, 20, NULL, 3, 237),
 (376, '14', 'Electric Hand Mixer', 'Versatile mixer perfect for baking', 90000, 15, NULL, 5, 199),
 (377, '14', 'Stainless Steel Utensil Set', 'Set of spoons, spatulas, and more', 40000, 35, NULL, 5, 233),
 (378, '14', 'Plastic Food Storage Containers', 'Leak-proof, microwave safe containers', 30000, 45, NULL, 3.5, 70),
@@ -759,7 +686,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (526, '19', 'Dry Shampoo', 'Refreshes hair between washes', 20000, 50, NULL, 3, 289),
 (527, '19', 'Hair Wax', 'For textured and styled looks', 35000, 22, NULL, 3.5, 330),
 (528, '19', 'Hair Brush Set', 'Detangling and styling brushes', 20000, 40, NULL, 4.5, 282);
-INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `price`, `stock_quatity`, `image_url`, `ratings`, `previews`) VALUES
+INSERT INTO "products" ("id", "subcategory_id", "product_name", "description", "price", "stock_quatity", "image_url", "ratings", "previews") VALUES
 (529, '19', 'Hair Clips', 'For sectioning and styling', 5000, 60, NULL, 5, 372),
 (530, '19', 'Curling Iron', 'Creates beautiful curls', 70000, 12, NULL, 4.5, 63),
 (531, '19', 'Straightening Iron', 'Smooths and straightens hair', 85000, 10, NULL, 3, 50),
@@ -998,14 +925,14 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (764, '32', 'The Total Money Makeover - Dave Ramsey', 'Debt-free living and financial planning', 22000, 9, NULL, 4, 96),
 (765, '32', 'Money Master the Game - Tony Robbins', 'Steps to financial freedom and security', 30000, 7, NULL, 4.5, 386),
 (766, '32', 'Your Money or Your Life - Vicki Robin', 'Transforming your relationship with money', 17000, 11, NULL, 5, 238),
-(767, '33', 'The Purpose Driven Life - Rick Warren', 'A spiritual journey to find life\'s purpose', 15000, 15, NULL, 4.5, 433),
+(767, '33', 'The Purpose Driven Life - Rick Warren', 'A spiritual journey to find life''s purpose', 15000, 15, NULL, 4.5, 433),
 (768, '33', 'The Bible (New Testament) - Various', 'Sacred scripture of Christianity', 10000, 20, NULL, 4, 500),
 (769, '33', 'Mere Christianity - C.S. Lewis', 'Christian apologetics and faith', 18000, 10, NULL, 4.5, 248),
 (770, '33', 'The Quran - Various', 'Holy book of Islam', 10000, 12, NULL, 3, 143),
 (771, '33', 'The Book of Mormon - Various', 'Sacred scripture of the LDS Church', 12000, 8, NULL, 4, 371),
 (772, '33', 'The Art of Happiness - Dalai Lama', 'Insights on spiritual well-being', 16000, 14, NULL, 3.5, 475),
 (773, '34', 'The Hobbit - J.R.R. Tolkien', 'A fantasy adventure of Bilbo Baggins', 22000, 10, NULL, 4, 309),
-(774, '34', 'Harry Potter and the Sorcerer\'s Stone - J.K. Rowling', 'The beginning of Harry Potter\'s journey', 25000, 12, NULL, 5, 72),
+(774, '34', 'Harry Potter and the Sorcerer''s Stone - J.K. Rowling', 'The beginning of Harry Potter''s journey', 25000, 12, NULL, 5, 72),
 (775, '34', 'The Name of the Wind - Patrick Rothfuss', 'A tale of a gifted young magician', 20000, 8, NULL, 5, 287),
 (776, '34', 'A Game of Thrones - George R.R. Martin', 'Epic fantasy set in Westeros', 28000, 9, NULL, 3, 268),
 (777, '34', 'The Lies of Locke Lamora - Scott Lynch', 'A fantasy novel of cunning and crime', 21000, 7, NULL, 4, 429),
@@ -1043,7 +970,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (809, '37', 'Avery Index Tabs', 'Tabs for organizing documents', 3500, 60, NULL, 5, 284),
 (810, '37', 'Zebra Pen Holder', 'Desk pen holder for organization', 5000, 40, NULL, 5, 393),
 (811, '38', 'Pampers Baby Diapers', 'Comfortable and absorbent disposable diapers', 15000, 120, NULL, 3, 164),
-(812, '38', 'Johnson\'s Baby Shampoo', 'Gentle shampoo suitable for newborns', 7000, 80, NULL, 4, 491),
+(812, '38', 'Johnson''s Baby Shampoo', 'Gentle shampoo suitable for newborns', 7000, 80, NULL, 4, 491),
 (813, '38', 'Chicco Baby Bottle', 'BPA-free baby bottles with anti-colic features', 20000, 50, NULL, 3.5, 109),
 (814, '38', 'Avent Baby Pacifiers', 'Soft pacifiers designed for soothing', 5000, 100, NULL, 3, 375),
 (815, '38', 'Graco Baby Car Seat', 'Safety-tested car seat for infants', 150000, 20, NULL, 5, 147),
@@ -1066,7 +993,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (832, '38', 'Hape Baby Wooden Toys', 'Educational wooden toys', 30000, 40, NULL, 3, 276),
 (833, '38', 'Bumbo Baby Seat', 'Support seat for sitting infants', 60000, 20, NULL, 3, 376),
 (834, '38', 'BabyBjörn Soft Bibs (Pack of 3)', 'Absorbent and soft bibs', 8000, 70, NULL, 4.5, 98),
-(835, '38', 'Johnson\'s Baby Oil', 'Gentle oil for massage and skin care', 7000, 60, NULL, 4, 217),
+(835, '38', 'Johnson''s Baby Oil', 'Gentle oil for massage and skin care', 7000, 60, NULL, 4, 217),
 (836, '38', 'Little Tikes Activity Table', 'Interactive activity table for toddlers', 55000, 22, NULL, 4, 287),
 (837, '38', 'Munchkin Soft Spout Sippy Cups', 'Training cups for toddlers', 8000, 65, NULL, 3.5, 287),
 (838, '38', 'Skip Hop Baby Diaper Bag', 'Stylish and spacious diaper bag', 90000, 18, NULL, 4.5, 71),
@@ -1292,7 +1219,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (1058, '50', 'Chicken Coop Large', 'Provides shelter for poultry', 80000, 5, NULL, 4, 206),
 (1059, '50', 'Vet-Approved Wound Spray 200ml', 'For treating injuries', 8000, 60, NULL, 3, 365),
 (1060, '50', 'Dairy Milking Machine 2 Bucket', 'Efficient milking system', 300000, 4, NULL, 3.5, 259);
-INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `price`, `stock_quatity`, `image_url`, `ratings`, `previews`) VALUES
+INSERT INTO "products" ("id", "subcategory_id", "product_name", "description", "price", "stock_quatity", "image_url", "ratings", "previews") VALUES
 (1061, '50', 'Livestock Scale Digital', 'Accurate weight measurement', 200000, 3, NULL, 3.5, 150),
 (1062, '50', 'Farm Animal Feed Trough 1.5m', 'Heavy-duty feeding station', 15000, 30, NULL, 5, 373),
 (1063, '50', 'Horse Grooming Kit', 'Complete grooming tools', 25000, 20, NULL, 3, 463),
@@ -1572,23 +1499,7 @@ INSERT INTO `products` (`id`, `subcategory_id`, `product_name`, `description`, `
 (1337, '68', 'Car Diagnostic Scanner', 'OBD-II scanner', 350000, 6, NULL, 4.5, 146),
 (1338, '68', 'Windshield Wiper Blades 2pcs', 'Auto glass cleaning', 7000, 80, NULL, 4, 383);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `product_images`
---
-
-CREATE TABLE `product_images` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `product_id` varchar(255) NOT NULL,
-  `url` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product_images`
---
-
-INSERT INTO `product_images` (`id`, `product_id`, `url`) VALUES
+INSERT INTO "product_images" ("id", "product_id", "url") VALUES
 (1, '627', 'storage/product_images/Adjustable Dumbbell Set_1.webp'),
 (2, '627', 'storage/product_images/Adjustable Dumbbell Set_2.webp'),
 (3, '627', 'storage/product_images/Adjustable Dumbbell Set_3.webp'),
@@ -1643,9 +1554,9 @@ INSERT INTO `product_images` (`id`, `product_id`, `url`) VALUES
 (52, '3', 'storage/product_images/Lenovo ThinkPad X1 Carbon_1.jpg'),
 (53, '3', 'storage/product_images/Lenovo ThinkPad X1 Carbon_2.avif'),
 (54, '3', 'storage/product_images/Lenovo ThinkPad X1 Carbon_3.jpg'),
-(55, '173', 'storage/product_images/Levi\'s 511 Slim Fit Jeans_1.jfif'),
-(56, '173', 'storage/product_images/Levi\'s 511 Slim Fit Jeans_2.jpg'),
-(57, '173', 'storage/product_images/Levi\'s 511 Slim Fit Jeans_3.webp'),
+(55, '173', 'storage/product_images/Levi''s 511 Slim Fit Jeans_1.jfif'),
+(56, '173', 'storage/product_images/Levi''s 511 Slim Fit Jeans_2.jpg'),
+(57, '173', 'storage/product_images/Levi''s 511 Slim Fit Jeans_3.webp'),
 (58, '87', 'storage/product_images/LG 65-Inch OLED_1.png'),
 (59, '87', 'storage/product_images/LG 65-Inch OLED_2.jpg'),
 (60, '87', 'storage/product_images/LG 65-Inch OLED_3.avif'),
@@ -1704,53 +1615,18 @@ INSERT INTO `product_images` (`id`, `product_id`, `url`) VALUES
 (113, '201', 'storage/product_images/Zara Floral Summer Dress_2.jpg'),
 (114, '201', 'storage/product_images/Zara Floral Summer Dress_3.webp');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `sessions`
---
-
-CREATE TABLE `sessions` (
-  `id` varchar(255) NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL,
-  `user_agent` text DEFAULT NULL,
-  `payload` longtext NOT NULL,
-  `last_activity` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `sessions`
---
-
-INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+INSERT INTO "sessions" ("id", "user_id", "ip_address", "user_agent", "payload", "last_activity") VALUES
 ('xl6K8Zk8tGuCHISqvo3mAFKALKbnqWJU9RStwZVQ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiSW1HMHJSTlRublBoSmpJNG5MTWFnaFo4SVlxMEJ6RWJ5cjJDaGU1cyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9jYXJ0L2NvdW50Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo0OiJjYXJ0IjthOjI6e2k6MjthOjI6e3M6MTA6InByb2R1Y3RfaWQiO3M6MToiMiI7czo4OiJxdWFudGl0eSI7aToxO31pOjYyODthOjI6e3M6MTA6InByb2R1Y3RfaWQiO3M6MzoiNjI4IjtzOjg6InF1YW50aXR5IjtpOjE7fX19', 1782835881);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `sub_categories`
---
-
-CREATE TABLE `sub_categories` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `category_id` varchar(255) NOT NULL,
-  `sub_category` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `sub_categories`
---
-
-INSERT INTO `sub_categories` (`id`, `category_id`, `sub_category`) VALUES
+INSERT INTO "sub_categories" ("id", "category_id", "sub_category") VALUES
 (1, '1', 'Laptops'),
 (2, '1', 'Smartphones'),
 (3, '1', 'Tablets'),
 (4, '1', 'Televisions'),
 (5, '1', 'Headphones'),
 (6, '1', 'Gaming'),
-(7, '2', 'Men\'s Clothing'),
-(8, '2', 'Women\'s Clothing'),
+(7, '2', 'Men''s Clothing'),
+(8, '2', 'Women''s Clothing'),
 (9, '2', 'Footwear'),
 (10, '2', 'Jewelry'),
 (11, '2', 'Bags & Accessories'),
@@ -1812,191 +1688,6 @@ INSERT INTO `sub_categories` (`id`, `category_id`, `sub_category`) VALUES
 (67, '11', 'Garden Tools & Equipment'),
 (68, '11', 'Automotive Tools & Parts');
 
--- --------------------------------------------------------
 
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `role` enum('customer','admin','vendor') NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `role`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+INSERT INTO "users" ("id", "name", "email", "role", "email_verified_at", "password", "remember_token", "created_at", "updated_at") VALUES
 (1, 'Test User', 'user@promart.com', 'customer', '2025-08-04 13:19:32', '$2y$12$wDljAgiVwharepoJAC9DQehm04B.qhCj5kq/YhZglc4JDc86bdRXq', 'hvSZLUjPKAJ6c225B5YMMgFUdaKMsnKEHFIATYHdSKWo6O1j1Fb3TtK1nPNn', '2025-08-04 13:19:32', '2025-08-04 13:19:32');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `cache`
---
-ALTER TABLE `cache`
-  ADD PRIMARY KEY (`key`);
-
---
--- Indexes for table `cache_locks`
---
-ALTER TABLE `cache_locks`
-  ADD PRIMARY KEY (`key`);
-
---
--- Indexes for table `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `categories_category_unique` (`category`);
-
---
--- Indexes for table `customers`
---
-ALTER TABLE `customers`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
-
---
--- Indexes for table `jobs`
---
-ALTER TABLE `jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `jobs_queue_index` (`queue`);
-
---
--- Indexes for table `job_batches`
---
-ALTER TABLE `job_batches`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `migrations`
---
-ALTER TABLE `migrations`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `order`
---
-ALTER TABLE `order`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `password_reset_tokens`
---
-ALTER TABLE `password_reset_tokens`
-  ADD PRIMARY KEY (`email`);
-
---
--- Indexes for table `products`
---
-ALTER TABLE `products`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `product_images`
---
-ALTER TABLE `product_images`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `sessions`
---
-ALTER TABLE `sessions`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `sessions_user_id_index` (`user_id`),
-  ADD KEY `sessions_last_activity_index` (`last_activity`);
-
---
--- Indexes for table `sub_categories`
---
-ALTER TABLE `sub_categories`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `sub_categories_sub_category_unique` (`sub_category`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_email_unique` (`email`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `categories`
---
-ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- AUTO_INCREMENT for table `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `jobs`
---
-ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `migrations`
---
-ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT for table `order`
---
-ALTER TABLE `order`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `products`
---
-ALTER TABLE `products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1339;
-
---
--- AUTO_INCREMENT for table `product_images`
---
-ALTER TABLE `product_images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
-
---
--- AUTO_INCREMENT for table `sub_categories`
---
-ALTER TABLE `sub_categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
