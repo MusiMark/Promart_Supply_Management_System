@@ -33,8 +33,9 @@ RUN cp -n .env.example .env || true
 # 9. Optimize the Composer autoloader
 RUN composer dump-autoload --no-dev --optimize
 
-# 10. Clear Laravel configuration caches
+# 10. Clear ALL hardcoded caches so Laravel reads Render's environment dashboard live
 RUN php artisan config:clear && \
+    php artisan cache:clear && \
     php artisan route:clear && \
     php artisan view:clear
 
