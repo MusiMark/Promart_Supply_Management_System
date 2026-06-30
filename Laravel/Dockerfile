@@ -8,10 +8,10 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # 2. Enable Apache mod_rewrite for Laravel routing
 RUN a2enmod rewrite
 
-# 3. Install system dependencies
+# 3. Install system dependencies (Adding SQLite support)
 RUN apt-get update && apt-get install -y \
-    git curl unzip libpq-dev libonig-dev libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip
+    git curl unzip libpq-dev libonig-dev libzip-dev zip sqlite3 libsqlite3-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring zip
 
 # 4. Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -38,8 +38,15 @@ RUN php artisan config:clear && \
     php artisan route:clear && \
     php artisan view:clear
 
-# 11. Set appropriate permissions for Laravel storage
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# === FIX FOR SUBFOLDER & MISSING SQLITE ===
+# If files were copied inside a "Laravel" folder, lift them to the root.
+RUN if [ -d "Laravel" ]; then cp -r Laravel/* . && rm -rf Laravel; fi
+# Explicitly ensure the database directory exists and create the empty sqlite file
+RUN mkdir -p database && touch database/database.sqlite
+# ==========================================
+
+# 11. Set appropriate permissions for Laravel storage AND the database
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 # Render automatically detects the port Apache exposes (80)
 EXPOSE 80
