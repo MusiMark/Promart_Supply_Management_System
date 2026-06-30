@@ -33,14 +33,13 @@ RUN cp -n .env.example .env || true
 # 9. Optimize the Composer autoloader
 RUN composer dump-autoload --no-dev --optimize
 
-# 10. Clear Laravel configuration caches
+# 10. Clear ALL hardcoded caches so Laravel reads Render's environment dashboard live
 RUN php artisan config:clear && \
     php artisan route:clear && \
     php artisan view:clear
 
 # 11. Set appropriate permissions for Laravel storage
-RUN chown -R www-data:www-data /var/www/html/Laravel/storage /var/www/html/Laravel/bootstrap/cache /var/www/html/Laravel/database
-
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Render automatically detects the port Apache exposes (80)
 EXPOSE 80
