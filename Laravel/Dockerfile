@@ -45,8 +45,11 @@ RUN if [ -d "Laravel" ]; then cp -r Laravel/* . && rm -rf Laravel; fi
 RUN mkdir -p database && touch database/database.sqlite
 # ==========================================
 
-# 11. Set appropriate permissions for Laravel storage AND the database
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+# === IMAGE FIX: Force fresh symlink generation inside the container ===
+RUN rm -rf public/storage && php artisan storage:link
+
+# 11. Set appropriate permissions for Laravel storage, public folder (for symlink), AND the database
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database /var/www/html/public
 
 # Render automatically detects the port Apache exposes (80)
 EXPOSE 80
